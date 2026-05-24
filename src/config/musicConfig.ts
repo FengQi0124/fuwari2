@@ -11,7 +11,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	showInNavbar: true,
 
 	// 使用方式："meting" 使用 Meting API，"local" 使用本地音乐列表
-	mode: "meting",
+	mode: "local",
 
 	// 默认音量 (0-1)
 	volume: 0.7,
@@ -48,14 +48,49 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	// 2. 或者直接填入歌词字符串内容
 	// lrc: "[00:00.00]歌词内容...",
 	local: {
-		playlist: [
-			{
-				name: "使一颗心免于哀伤",
-				artist: "知更鸟 / HOYO-MiX / Chevy",
-				url: "/assets/music/使一颗心免于哀伤-哼唱.mp3",
-				cover: "/assets/music/cover/109951169585655912.webp",
-				lrc: "",
-			},
-		],
-	},
+    playlist: [
+        {
+            name: "别让我担心",
+            artist: "多多poi",
+            url: "/assets/music/别让我担心-多多poi.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/别让我担心-多多poi.lrc",
+        },
+        {
+            name: "我不曾忘记",
+            artist: "花玲 / 张安琪 / 沐霏",
+            url: "/assets/music/我不曾忘记-花玲&张安琪&沐霏.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/我不曾忘记-花玲&张安琪&沐霏.lrc",
+        },
+        {
+            name: "DAMIDAMI",
+            artist: "Sihan / 三Z-STUDIO / HOYO-MiX",
+            url: "/assets/music/DAMIDAMI-Sihan&三Z-STUDIO&HOYO-MiX.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/DAMIDAMI-Sihan&三Z-STUDIO&HOYO-MiX.lrc",
+        },
+        {
+            name: "Moon Halo",
+            artist: "茶理理理子 / TetraCalyx / hanser / HOYO-MiX",
+            url: "/assets/music/Moon Halo-茶理理理子&TetraCalyx&hanser&HOYO-MiX.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/Moon Halo-茶理理理子&TetraCalyx&hanser&HOYO-MiX.lrc",
+        },
+        {
+            name: "Ripples of Past Reverie",
+            artist: "Cassie Wei / HOYO-MiX",
+            url: "/assets/music/Ripples of Past Reverie-Cassie Wei&HOYO-MiX.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/Ripples of Past Reverie-Cassie Wei&HOYO-MiX.lrc",
+        },
+        {
+            name: "Rubia",
+            artist: "周深",
+            url: "/assets/music/Rubia-周深.mp3",
+            cover: "",
+            lrc: "/assets/music/lrc/Rubia-周深.lrc",
+        },
+    ],
+},
 };

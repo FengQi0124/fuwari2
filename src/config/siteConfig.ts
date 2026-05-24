@@ -10,14 +10,14 @@ export const siteConfig: SiteConfig = {
 	title: "风起凌依",
 
 	// 站点副标题
-	subtitle: "Demo Blog",
+	subtitle: "神秘小网站",
 
 	// 站点 URL
 	site_url: "https://blog.fengqi01.top",
 
 	// 站点描述
 	description:
-		"Firefly 是一款基于 Astro 框架和 Fuwari 模板开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。",
+		"Firefly 是一款基于 Astro 框架和 Fuwari 模板F开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。",
 
 	// 站点关键词
 	keywords: [
@@ -56,9 +56,8 @@ export const siteConfig: SiteConfig = {
 
 //线路切换配置
 officialSites: [
-    { url: "https://tangjunkai.eu.org/",     alias: "1. CloudFlare" },
-    { url: "https://fuwari-cc3.pages.dev/",  alias: "2. CloudFlare" },
-    { url: "https://tangjunkai.vercel.app/", alias: "3. Vercel"     },
+    { url: "https://blog.fengqi01.top/",     alias: "1. CloudFlare" },
+    { url: "https://fuwari2.vercel.app/", alias: "2. Vercel"     },
     { url: "http://localhost:4321",           alias: "0. Dev"        },
 ],
 	// Favicon 配置
@@ -123,16 +122,6 @@ officialSites: [
 	// OpenGraph图片功能,注意开启后要渲染很长时间，不建议本地调试的时候开启
 	generateOgImages: false,
 
-	// bangumi配置
-	bangumi: {
-		// Bangumi用户ID
-		userId: "1143164",
-		// 条目类型排序，数组中的类型将按顺序优先展示
-		// 可选值: "anime" | "book" | "music" | "game" | "real" (暂不支持"real"类型)
-		// 未列出的类型将按默认顺序排在后面
-		categoryOrder: ["anime", "book", "music", "game"],
-	},
-
 	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404
 	// bangumi的数据为编译时获取的，所以不是实时数据，请配置bangumi.userId
 	pages: {
@@ -143,7 +132,7 @@ officialSites: [
 		// 留言板页面开关，需要配置评论系统
 		guestbook: true,
 		// 番组计划页面开关，含追番、游戏、书籍和音乐，dev调试时只获取一页数据，build才会获取全部数据
-		bangumi: true,
+		bangumi: false,
 		// 相册页面开关
 		gallery: false,
 	},
