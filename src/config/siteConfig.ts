@@ -10,7 +10,7 @@ export const siteConfig: SiteConfig = {
 	title: "风起凌依",
 
 	// 站点副标题
-	subtitle: "神秘小网站",
+	subtitle: "Blog",
 
 	// 站点 URL
 	site_url: "https://blog.fengqi01.top",
