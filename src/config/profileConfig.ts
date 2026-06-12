@@ -12,7 +12,7 @@ export const profileConfig: ProfileConfig = {
 	name: "风起凌依",
 
 	// 个人签名
-	bio: "May all the beauty be blessed",
+	bio: "我们都会拥有美好的未来",
 
 	// 链接配置
 	// 已经预装的图标集：fa7-brands，fa7-regular，fa7-solid，material-symbols，simple-icons
