@@ -5,7 +5,7 @@ export const announcementConfig: AnnouncementConfig = {
 	title: "公告",
 
 	// 公告内容
-	content: "CloudFlare还是太好用了",
+	content: "Ciallo ～(∠・ω <) ⌒☆",
 
 	// 是否允许用户关闭公告
 	closable: true,

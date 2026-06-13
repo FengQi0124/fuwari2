@@ -17,18 +17,18 @@ export const siteConfig: SiteConfig = {
 
 	// 站点描述
 	description:
-		"Firefly 是一款基于 Astro 框架和 Fuwari 模板F开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。",
+		"Life blooms like a flower",
 
 	// 站点关键词
 	keywords: [
 		"Firefly",
 		"Fuwari",
 		"Astro",
-		"ACGN",
+		"风起凌依",
 		"博客",
 		"技术博客",
 		"静态博客",
-"风起凌依",
+
 	],
 
 	// 主题色
@@ -51,7 +51,7 @@ export const siteConfig: SiteConfig = {
 		// 是否开启卡片边框和阴影，开启后让网站更有立体感
 		border: true,
 		// 是否让卡片风格跟随主题色相
-		followTheme: false,
+		followTheme: true,
 	},
 
 //线路切换配置

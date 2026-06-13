@@ -85,7 +85,7 @@ export const spineModelConfig: SpineModelConfig = {
 // Live2D 看板娘配置 (使用 l2d-widget 库，文档：https://l2d-widget.hacxy.cn)
 export const live2dWidgetConfig: Live2DWidgetConfig = {
 	// Live2D 看板娘开关
-	enable: false,
+	enable: true,
 	// 模型配置，支持单个模型或数组（多模型切换）
 	model: {
 		// Live2D模型文件路径
@@ -128,11 +128,7 @@ export const live2dWidgetConfig: Live2DWidgetConfig = {
 				label: "休眠",
 				action: "sleep",
 			},
-			{
-				icon: "mdi:github",
-				label: "GitHub",
-				action: "github",
-			},
+			
 		],
 		// 菜单对齐方式
 		align: "right" as const,
@@ -140,7 +136,7 @@ export const live2dWidgetConfig: Live2DWidgetConfig = {
 	// 提示气泡配置
 	tips: {
 		// 气泡开关
-		enable: true,
+		enable: false,
 		// 初始欢迎消息
 		welcomeMessage: ["你好！我是Miku~", "欢迎来到我的世界！"],
 		// 循环提示内容
