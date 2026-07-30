@@ -23,6 +23,9 @@
 #navbar > div {
   border-radius: 9999px !important;
   margin: 0.6rem 1rem;
+  /* 所有情况下元件边距恒 = 圆弧半径的一半 (R/2 = 1.125rem) */
+  padding-left: 1.125rem !important;
+  padding-right: 1.125rem !important;
   backdrop-filter: var(--glass-blur-strong) !important;
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
