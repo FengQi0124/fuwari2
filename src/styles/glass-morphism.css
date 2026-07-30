@@ -27,17 +27,25 @@
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
 
-/* 移动端（≤767px）- 顶端贴边无圆角，滚动后渐变悬浮胶囊 */
+/* 移动端（≤767px）- 顶端贴边，滚动后左右收缩往中间缩小成胶囊 */
 @media (max-width: 767px) {
-  /* 顶端：贴边无圆角 */
-  #navbar > div {
+  /* 顶端：贴边满宽无圆角 */
+  #navbar > div,
+  body.wallpaper-transparent #navbar[data-transparent-mode] > div {
     margin: 0 !important;
     border-radius: 0 !important;
+    transition:
+      margin 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-radius 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      backdrop-filter 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* 滚动后：悬浮胶囊形 */
-  #navbar.navbar-sticky-shadow > div {
-    margin: 0.5rem 0.75rem !important;
+  /* 滚动后：左右收缩往中间缩小，变成胶囊 */
+  #navbar.navbar-sticky-shadow > div,
+  body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
+    margin: 0 0.75rem !important;
     border-radius: 9999px !important;
   }
 }
@@ -115,7 +123,7 @@ body.wallpaper-transparent .post-list-layout-switch {
 }
 
 /* ============================================
- * 下拉面板 / 浮动面板毛玻璃
+ * 下拉面板 / 浮动面板毛玻璃（与顶栏一致）
  * ============================================ */
 #wallpaper-wrapper ~ * .dropdown-content,
 #wallpaper-wrapper ~ * .float-panel,
@@ -123,9 +131,9 @@ body:has(#wallpaper-wrapper) .dropdown-content,
 body:has(#wallpaper-wrapper) .float-panel,
 body.wallpaper-transparent .dropdown-content,
 body.wallpaper-transparent .float-panel {
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: var(--glass-blur-strong);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  background: rgba(255, 255, 255, 0.42) !important;
   box-shadow: var(--glass-shadow) !important;
   border: 1px solid var(--glass-border-light) !important;
 }
@@ -134,7 +142,7 @@ body.wallpaper-transparent .float-panel {
 :root.dark .float-panel,
 .dark .dropdown-content,
 .dark .float-panel {
-  background: rgba(50, 50, 60, 0.45) !important;
+  background: rgba(50, 50, 60, 0.42) !important;
   box-shadow: var(--glass-shadow-dark) !important;
   border: 1px solid var(--glass-border-dark) !important;
 }

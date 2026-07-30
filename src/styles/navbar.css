@@ -270,7 +270,7 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-enab
 
 
 
-/* 下拉菜单和浮动面板使用毛玻璃效果 */
+/* 下拉菜单和浮动面板使用毛玻璃效果（与顶栏一致） */
 /* 亮色主题 */
 #wallpaper-wrapper~* .dropdown-content,
 #wallpaper-wrapper~* .float-panel,
@@ -278,9 +278,9 @@ body:has(#wallpaper-wrapper) .dropdown-content,
 body:has(#wallpaper-wrapper) .float-panel,
 body.wallpaper-transparent .dropdown-content,
 body.wallpaper-transparent .float-panel {
-    backdrop-filter: var(--glass-blur) !important;
-    -webkit-backdrop-filter: var(--glass-blur) !important;
-    background: rgba(255, 255, 255, 0.45) !important;
+    backdrop-filter: var(--glass-blur-strong) !important;
+    -webkit-backdrop-filter: var(--glass-blur-strong) !important;
+    background: rgba(255, 255, 255, 0.42) !important;
     box-shadow: var(--glass-shadow) !important;
     border: 1px solid var(--glass-border-light) !important;
 }
@@ -292,9 +292,9 @@ body.wallpaper-transparent .float-panel {
 :root.dark body:has(#wallpaper-wrapper) .float-panel,
 :root.dark body.wallpaper-transparent .dropdown-content,
 :root.dark body.wallpaper-transparent .float-panel {
-    backdrop-filter: var(--glass-blur) !important;
-    -webkit-backdrop-filter: var(--glass-blur) !important;
-    background: rgba(50, 50, 60, 0.45) !important;
+    backdrop-filter: var(--glass-blur-strong) !important;
+    -webkit-backdrop-filter: var(--glass-blur-strong) !important;
+    background: rgba(50, 50, 60, 0.42) !important;
     box-shadow: var(--glass-shadow-dark) !important;
     border: 1px solid var(--glass-border-dark) !important;
 }
