@@ -28,66 +28,46 @@
 }
 
 /* ============================================================
- * 移动端（≤767px）导航栏动画 — 新方案 v2（元件分阶段移动）
+ * 移动端（≤767px）导航栏动画 — 简洁版
  *
  * 核心思路：顶栏始终是完整胶囊形（border-radius:9999px 恒定不变），
- * 通过负 margin 控制"左右圆弧帽"的伸出/收回，
- * 通过 padding + transition-delay 实现"元件分阶段移动"。
+ * 通过负 margin 控制"左右圆弧帽"的伸出/收回。
+ * 内部元件边距恒 = 圆弧半径的一半 (R/2 = 1.125rem)，
+ * 所有状态下一致，不需要任何 padding 过渡动画。
  *
- * 圆弧半径 R = 2.25rem，一半 = 1.125rem
+ *   吸边(顶端)：margin: 0 -1.125rem → 帽伸出屏外，视觉矩形贴边
+ *               内容起点: -1.125rem + 1.125rem = 0 恰好贴边 ✓
  *
- * ───────── 上浮时序（→ 吸边/顶端）：共 1.0s
- *   阶段① 0 ~ 0.7s  margin  0.5_0.75rem → 0_-2.25rem   帽子延伸出屏
- *   阶段② 0.7 ~ 1.0s padding 2.25rem → 3.375rem(+1.125) 元件向中间移 R/2
+ *   下沉(滚动)：margin: 0.5rem 0.75rem → 帽收回可见，胶囊悬浮
  *
- * ───────── 下沉时序（→ 滚动）：共 1.0s
- *   阶段① 0 ~ 0.3s  padding 3.375rem → 2.25rem(-1.125) 元件先向两侧归位
- *   阶段② 0.3 ~ 1.0s margin  0_-2.25rem → 0.5_0.75rem   帽子收回悬浮
- *
- * 所有过渡都走 cubic-bezier 非线性曲线，无跳帧。
+ * 只过渡 margin（单一属性），完全无跳帧。
  * ============================================================ */
 @media (max-width: 767px) {
-  /* ---------- 吸边（顶端）：最终态 ─ 帽伸出 + 元件内移 R/2 ---------- */
+  /* ---------- 吸边（顶端）：帽伸出屏外 ---------- */
   #navbar > div {
+    /* 始终胶囊形，形状不变，无过渡 */
     border-radius: 9999px !important;
-    /* 上浮最终态：元件向中间移 R/2 = 1.125rem → padding = 2.25 + 1.125 */
-    padding-left: 3.375rem !important;
-    padding-right: 3.375rem !important;
-    /* 负margin把圆弧帽推出屏幕外 */
-    margin: 0 -2.25rem !important;
+    /* 内部元件边距恒 = 圆弧半径的一半 (1.125rem)，所有状态一致 */
+    padding-left: 1.125rem !important;
+    padding-right: 1.125rem !important;
+    /* 负margin绝对值 = padding → 内容起点恰好 0 贴边 */
+    margin: 0 -1.125rem !important;
     box-shadow: none !important;
-
-    /* ── 上浮方向的 transition：──
-       margin 立即开始(0.7s)，padding 延迟 0.7s 后再 0.3s 内完成 */
+    /* 只过渡 margin + 玻璃属性，没有 border-radius / padding 过渡！ */
     transition:
-      margin            0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      padding-left      0.3s cubic-bezier(0.25, 0.75, 0.2, 1) 0.7s !important,
-      padding-right     0.3s cubic-bezier(0.25, 0.75, 0.2, 1) 0.7s !important,
-      background-color  0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      box-shadow        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      backdrop-filter   0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      border-color      0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important;
+      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* ---------- 下沉（navbar-sticky-shadow）：最终态 ─ 帽收回 + 元件归位 ---------- */
+  /* ---------- 下沉（navbar-sticky-shadow）：帽收回，胶囊悬浮 ---------- */
   #navbar.navbar-sticky-shadow > div {
-    /* 下沉最终态：元件归位 padding = R = 2.25rem */
-    padding-left: 2.25rem !important;
-    padding-right: 2.25rem !important;
     /* 正margin悬浮，帽子完整可见 */
     margin: 0.5rem 0.75rem !important;
     box-shadow: var(--shadow-navbar) !important;
-
-    /* ── 下沉方向的 transition（覆盖上面）：──
-       padding 立即开始(0.3s 先归位)，margin 延迟 0.3s 后再 0.7s 内完成 */
-    transition:
-      padding-left      0.3s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      padding-right     0.3s cubic-bezier(0.25, 0.75, 0.2, 1) 0s   !important,
-      margin            0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0.3s !important,
-      background-color  0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0.3s !important,
-      box-shadow        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0.3s !important,
-      backdrop-filter   0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0.3s !important,
-      border-color      0.7s cubic-bezier(0.25, 0.75, 0.2, 1) 0.3s !important;
+    /* border-radius / padding 保持一致，不需要重新定义 */
   }
 
   /* 暗色下沉阴影 */
