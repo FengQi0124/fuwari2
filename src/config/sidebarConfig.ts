@@ -184,6 +184,13 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			showOnPostPage: true,
 		},
 		{
+			// 线路切换
+			type: "domainSwitcher",
+			enable: true,
+			showOnPostPage: true,
+			showOnNonPostPage: true,
+		},
+		{
 			// 组件类型：音乐播放器
 			type: "music",
 			// 是否启用该组件
