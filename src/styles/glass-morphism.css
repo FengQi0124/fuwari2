@@ -30,8 +30,8 @@
 /* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
 @media (max-width: 767px) {
   /* ============================================================
-   * 吸边（顶端）默认状态 —— 对应"上浮"动画方向：
-   *   先贴边（margin 立即开始），再线性延长（padding 延迟 0.4s 开始）
+   * 吸边（顶端）默认状态 —— 对应"上浮"动画方向
+   * 0.7s 非线性快到位：开头快、结尾慢，自然回弹
    * ============================================================ */
   #navbar > div,
   body.wallpaper-transparent #navbar[data-transparent-mode] > div {
@@ -39,28 +39,27 @@
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
-    /* 上浮：margin 先动(0s delay)，padding/border-radius 等 0.4s 后再动 */
     transition:
-      margin                 1.2s linear 0s,
-      padding-left           1.2s linear 0.4s,
-      padding-right          1.2s linear 0.4s,
-      border-radius          1.2s linear 0.4s,
-      background-color       1.2s linear 0s,
-      box-shadow             1.2s linear 0s,
-      backdrop-filter        1.2s linear 0s;
+      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
   }
 
-  /* 吸边时导航栏内按钮圆角保持方形，border-radius 同样延迟跟上 padding */
+  /* 吸边时导航栏内按钮圆角保持方形 */
   #navbar .btn-plain {
     transition:
-      border-radius 1.2s linear 0.4s,
+      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
       background-color 0.15s ease,
       color 0.15s ease;
   }
 
   /* ============================================================
-   * 下沉（滚动后）状态 —— 对应"下沉"动画方向：
-   *   所有位置属性同步线性移动（无 delay）
+   * 下沉（滚动后）状态
+   * 0.7s 非线性快到位：开头快、结尾慢，与上浮对称
    * ============================================================ */
   #navbar.navbar-sticky-shadow > div,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
@@ -68,23 +67,22 @@
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     border-radius: 9999px !important;
-    /* 下沉：全部同步线性移动 */
     transition:
-      margin                 1.2s linear 0s,
-      padding-left           1.2s linear 0s,
-      padding-right          1.2s linear 0s,
-      border-radius          1.2s linear 0s,
-      background-color       1.2s linear 0s,
-      box-shadow             1.2s linear 0s,
-      backdrop-filter        1.2s linear 0s;
+      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
   }
 
-  /* 下沉时按钮圆角同步线性变成大圆弧 */
+  /* 下沉时按钮圆角同步变圆弧 */
   #navbar.navbar-sticky-shadow .btn-plain,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
     border-radius: 9999px !important;
     transition:
-      border-radius 1.2s linear 0s,
+      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
       background-color 0.15s ease,
       color 0.15s ease;
   }
