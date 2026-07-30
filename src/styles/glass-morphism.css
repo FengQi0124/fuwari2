@@ -27,68 +27,80 @@
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
 
-/* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
+/* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊
+ *
+ * 关键防跳帧处理：
+ * 1) 移动端完全接管 #navbar>div 的所有 transition，覆盖 navbar-surface-transition 的 0.36s
+ * 2) 上浮/下沉两端使用完全相同的选择器前缀，仅末尾差异 .navbar-sticky-shadow
+ *    保证 specificity 完全一致，浏览器在 class 切换瞬间能精确算对起点/终点
+ * 3) box-shadow 用显式值覆盖掉 navbar.css 中 #navbar.navbar-sticky-shadow>div 的 !important，
+ *    避免阴影在过渡中途被 !important 打断
+ * 4) 全部用 !important 保证绝对优先级，不再被其他来源覆盖
+ */
 @media (max-width: 767px) {
-  /* ============================================================
-   * 上浮基准（吸边）：0.7s 非线性
-   * 时长与曲线统一，避免与下沉过渡不对称导致的跳帧
-   * ============================================================ */
-  html body #navbar > div,
-  html body.wallpaper-transparent #navbar[data-transparent-mode] > div,
-  html #wallpaper-wrapper ~ * #navbar[data-transparent-mode] > div,
-  html body:has(#wallpaper-wrapper) #navbar[data-transparent-mode] > div {
+  /* ---------- 上浮基准（吸边）---------- */
+  :root body #navbar > div,
+  :root body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode] > div,
+  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode] > div {
     margin: 0 -1.5rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
+    box-shadow: none !important;
     transition:
-      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important;
+      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* 吸边时导航栏内按钮圆角保持方形，0.7s 非线性 */
-  html body #navbar .btn-plain {
+  /* 吸边：按钮圆角保持方形 */
+  :root body #navbar .btn-plain {
     transition:
-      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      border-radius 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color 0.15s ease,
       color 0.15s ease;
   }
 
-  /* ============================================================
-   * 下沉基准（navbar-sticky-shadow）：0.7s 非线性
-   * 时长曲线与上浮完全相同，避免过渡跳帧
-   * ============================================================ */
-  html body #navbar.navbar-sticky-shadow > div,
-  html body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div,
-  html #wallpaper-wrapper ~ * #navbar[data-transparent-mode].navbar-sticky-shadow > div,
-  html body:has(#wallpaper-wrapper) #navbar[data-transparent-mode].navbar-sticky-shadow > div {
+  /* ---------- 下沉基准（navbar-sticky-shadow）---------- */
+  :root body #navbar.navbar-sticky-shadow > div,
+  :root body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode].navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     border-radius: 9999px !important;
+    box-shadow: var(--shadow-navbar) !important;
     transition:
-      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
-      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important;
+      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* 下沉时按钮圆角同步变圆弧，0.7s 非线性 */
-  html body #navbar.navbar-sticky-shadow .btn-plain,
-  html body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
+  /* 下沉：按钮圆角变圆弧 */
+  :root body #navbar.navbar-sticky-shadow .btn-plain,
+  :root body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
     border-radius: 9999px !important;
     transition:
-      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      border-radius 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color 0.15s ease,
       color 0.15s ease;
+  }
+
+  /* ---------- 暗色下沉阴影值同步 ---------- */
+  :root.dark body #navbar.navbar-sticky-shadow > div {
+    box-shadow: var(--shadow-navbar-dark) !important;
   }
 }
 
@@ -108,18 +120,29 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled
   margin: 0 !important;
 }
 
-/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外，padding 匹配 */
+/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外，padding 匹配
+ * 选择器前缀和上方保持一致，且用 !important，避免 specificity 不同导致过渡丢失 */
 @media (max-width: 767px) {
-  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
-  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
-  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
-  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
+  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
+  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
     margin: 0 -1.5rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
+    box-shadow: none !important;
+    transition:
+      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 }
 
