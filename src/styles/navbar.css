@@ -256,10 +256,16 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-enab
 
 
 
-/* 下拉菜单和浮动面板使用毛玻璃效果（与卡片一致，透明度更高易读性更好） */
-/* 不加前置选择器，确保始终生效不丢失 */
+/* 下拉菜单和浮动面板使用毛玻璃效果（与卡片一致，透明度 0.52） */
+/* 亮色 */
 .dropdown-content,
-.float-panel {
+.float-panel,
+#wallpaper-wrapper ~ * .dropdown-content,
+#wallpaper-wrapper ~ * .float-panel,
+body:has(#wallpaper-wrapper) .dropdown-content,
+body:has(#wallpaper-wrapper) .float-panel,
+body.wallpaper-transparent .dropdown-content,
+body.wallpaper-transparent .float-panel {
     backdrop-filter: var(--glass-blur) !important;
     -webkit-backdrop-filter: var(--glass-blur) !important;
     background: rgba(255, 255, 255, 0.52) !important;
@@ -267,9 +273,23 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-enab
     border: 1px solid var(--glass-border-light) !important;
 }
 
-/* 暗色主题 */
+/* 暗色主题 —— 完整覆盖亮色所有选择器组合，避免 ID 级 specificity 覆盖 */
 :root.dark .dropdown-content,
-:root.dark .float-panel {
+:root.dark .float-panel,
+:root.dark #wallpaper-wrapper ~ * .dropdown-content,
+:root.dark #wallpaper-wrapper ~ * .float-panel,
+:root.dark body:has(#wallpaper-wrapper) .dropdown-content,
+:root.dark body:has(#wallpaper-wrapper) .float-panel,
+:root.dark body.wallpaper-transparent .dropdown-content,
+:root.dark body.wallpaper-transparent .float-panel,
+.dark .dropdown-content,
+.dark .float-panel,
+.dark #wallpaper-wrapper ~ * .dropdown-content,
+.dark #wallpaper-wrapper ~ * .float-panel,
+.dark body:has(#wallpaper-wrapper) .dropdown-content,
+.dark body:has(#wallpaper-wrapper) .float-panel,
+.dark body.wallpaper-transparent .dropdown-content,
+.dark body.wallpaper-transparent .float-panel {
     backdrop-filter: var(--glass-blur) !important;
     -webkit-backdrop-filter: var(--glass-blur) !important;
     background: rgba(50, 50, 60, 0.52) !important;

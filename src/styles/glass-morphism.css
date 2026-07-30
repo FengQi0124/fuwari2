@@ -27,27 +27,29 @@
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
 
-/* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊
+/* ============================================================
+ * 移动端（≤767px）导航栏动画 —— 最简高优先级版本
  *
- * 关键防跳帧处理：
- * 1) 移动端完全接管 #navbar>div 的所有 transition，覆盖 navbar-surface-transition 的 0.36s
- * 2) 上浮/下沉两端使用完全相同的选择器前缀，仅末尾差异 .navbar-sticky-shadow
- *    保证 specificity 完全一致，浏览器在 class 切换瞬间能精确算对起点/终点
- * 3) box-shadow 用显式值覆盖掉 navbar.css 中 #navbar.navbar-sticky-shadow>div 的 !important，
- *    避免阴影在过渡中途被 !important 打断
- * 4) 全部用 !important 保证绝对优先级，不再被其他来源覆盖
- */
+ * 跳帧根因：
+ *   之前使用 4 条不同的 specificity 前缀选择器 + Banner 覆盖，
+ *   class 切换瞬间浏览器在多来源规则间取 computed 值 → 起点算错 → 跳帧
+ *
+ * 修复方案：
+ *   只用最简的 id 选择器：`#navbar > div`（specificity = 0-1-0，稳定！）
+ *   上浮/下沉除了 `.navbar-sticky-shadow` 外完全相同，
+ *   所有目标值和 transition 全部加 !important，
+ *   并在 transition 中显式声明 #navbar > div 内所有参与位置的属性，
+ *   确保浏览器在 class 切换瞬间找到唯一且完整的起点/终点。
+ * ============================================================ */
 @media (max-width: 767px) {
   /* ---------- 上浮基准（吸边）---------- */
-  :root body #navbar > div,
-  :root body.wallpaper-transparent #navbar[data-transparent-mode] > div,
-  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode] > div,
-  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode] > div {
+  #navbar > div {
     margin: 0 -1.5rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
     box-shadow: none !important;
+    /* 8 条属性 + 内部直接子元素位置过渡全部 0.7s 非线性 */
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
@@ -59,19 +61,23 @@
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* 吸边：按钮圆角保持方形 */
-  :root body #navbar .btn-plain {
-    transition:
-      border-radius 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      background-color 0.15s ease,
-      color 0.15s ease;
+  /* 内部网格容器随 padding 平滑移动 —— 确保原件位置过渡 */
+  #navbar > div > * {
+    transition: transform 0.7s cubic-bezier(0.25, 0.75, 0.2, 1);
   }
 
-  /* ---------- 下沉基准（navbar-sticky-shadow）---------- */
-  :root body #navbar.navbar-sticky-shadow > div,
-  :root body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div,
-  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode].navbar-sticky-shadow > div,
-  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode].navbar-sticky-shadow > div {
+  /* 按钮圆角（吸边：方形，但带过渡） */
+  #navbar .btn-plain {
+    transition:
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.15s ease,
+      color                  0.15s ease;
+  }
+
+  /* ---------- 下沉基准（navbar-sticky-shadow）
+   * 选择器比上浮基准则多 1 个 class，保证覆盖生效且过渡能从起点找到终点
+   * ---------- */
+  #navbar.navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -89,60 +95,36 @@
   }
 
   /* 下沉：按钮圆角变圆弧 */
-  :root body #navbar.navbar-sticky-shadow .btn-plain,
-  :root body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
+  #navbar.navbar-sticky-shadow .btn-plain {
     border-radius: 9999px !important;
     transition:
-      border-radius 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      background-color 0.15s ease,
-      color 0.15s ease;
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      background-color       0.15s ease,
+      color                  0.15s ease;
   }
 
-  /* ---------- 暗色下沉阴影值同步 ---------- */
-  :root.dark body #navbar.navbar-sticky-shadow > div {
+  /* ---------- 暗色下沉阴影 ---------- */
+  .dark #navbar.navbar-sticky-shadow > div,
+  :root.dark #navbar.navbar-sticky-shadow > div {
     box-shadow: var(--shadow-navbar-dark) !important;
   }
 }
 
-/* Banner 透明模式（semi/semifull）首页透明阶段：恢复原来的贴底圆角 + 无margin */
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div {
-  border-radius: 0 0 0.75rem 0.75rem !important;
-  margin: 0 !important;
-}
+/* Banner 透明模式（semi/semifull / full）：桌面端保留贴底圆角
+ * 移动端统一由上面的 0.7s 动画接管（保持圆角伸出屏幕的下沉/上浮逻辑） */
+@media (min-width: 768px) {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div {
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    margin: 0 !important;
+  }
 
-/* Banner full 模式完全透明 */
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
-/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外，padding 匹配
- * 选择器前缀和上方保持一致，且用 !important，避免 specificity 不同导致过渡丢失 */
-@media (max-width: 767px) {
-  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
-  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
-  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
-  :root #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
-  :root body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
-    margin: 0 -1.5rem !important;
-    padding-left: 2.5rem !important;
-    padding-right: 2.5rem !important;
-    border-radius: 9999px !important;
-    box-shadow: none !important;
-    transition:
-      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
+    border-radius: 0 !important;
+    margin: 0 !important;
   }
 }
 
@@ -203,8 +185,9 @@ body.wallpaper-transparent .post-list-layout-switch {
 }
 
 /* ============================================
- * 下拉面板 / 浮动面板毛玻璃（与卡片一致，透明度更高易读性更好）
- * 不加前置选择器，保证下拉面板始终有玻璃背景不丢失
+ * 下拉面板 / 浮动面板毛玻璃（与卡片一致，透明度 0.52）
+ * 注意：暗色模式必须匹配与亮色完全相同组合的选择器，
+ *       且 specificity 必须 ≥ 亮色（含 ID/伪类），否则暗色背景会被亮色的 ID 级规则覆盖！
  * ============================================ */
 .dropdown-content,
 .float-panel,
@@ -221,12 +204,25 @@ body.wallpaper-transparent .float-panel {
   border: 1px solid var(--glass-border-light) !important;
 }
 
+/* 暗色模式 —— 完整覆盖上述所有选择器组合，保证 specificity 足够 */
 :root.dark .dropdown-content,
 :root.dark .float-panel,
+:root.dark #wallpaper-wrapper ~ * .dropdown-content,
+:root.dark #wallpaper-wrapper ~ * .float-panel,
+:root.dark body:has(#wallpaper-wrapper) .dropdown-content,
+:root.dark body:has(#wallpaper-wrapper) .float-panel,
+:root.dark body.wallpaper-transparent .dropdown-content,
+:root.dark body.wallpaper-transparent .float-panel,
 .dark .dropdown-content,
-.dark .float-panel {
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+.dark .float-panel,
+.dark #wallpaper-wrapper ~ * .dropdown-content,
+.dark #wallpaper-wrapper ~ * .float-panel,
+.dark body:has(#wallpaper-wrapper) .dropdown-content,
+.dark body:has(#wallpaper-wrapper) .float-panel,
+.dark body.wallpaper-transparent .dropdown-content,
+.dark body.wallpaper-transparent .float-panel {
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
   background: rgba(50, 50, 60, 0.52) !important;
   box-shadow: var(--glass-shadow-dark) !important;
   border: 1px solid var(--glass-border-dark) !important;
