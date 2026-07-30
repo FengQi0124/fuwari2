@@ -28,39 +28,49 @@
 }
 
 /* ============================================================
- * 移动端（≤767px）导航栏动画
- * 基础逻辑：吸边 = 矩形贴边；下沉 = 胶囊形悬浮
- * 只用 margin + border-radius 两个属性做过渡，避免 padding 导致跳帧
+ * 移动端（≤767px）导航栏动画 — 新方案
+ *
+ * 核心思路：顶栏始终是完整胶囊形（border-radius:9999px 恒定不变），
+ * 通过负 margin 控制"左右圆弧帽"的伸出/收回：
+ *
+ *   吸边(顶端)：margin: 0 -2.25rem → 左右圆弧帽被推出屏幕外
+ *               → 视觉上是矩形贴边，圆弧帽向左右"延伸"
+ *
+ *   下沉(滚动)：margin: 0.5rem 0.75rem → 圆弧帽收回来可见
+ *               → 整体变胶囊形悬浮，圆弧帽"缩短"
+ *
+ * 内部元件边距恒等于下沉时圆弧半径 (h-18/2 = 36px = 2.25rem)，
+ * 所有情况下保持一致，元件位置过渡自然丝滑，无跳帧。
+ *
+ * 只过渡 margin（单一属性），避免 border-radius/padding 过渡的跳帧。
  * ============================================================ */
 @media (max-width: 767px) {
-  /* ---------- 吸边（顶端）基准 ---------- */
+  /* ---------- 吸边（顶端）：圆弧帽延伸出屏幕，视觉矩形贴边 ---------- */
   #navbar > div {
-    margin: 0 !important;
-    padding: 0 0 !important;         /* 用 Navbar 自身的 px-4 即可 */
-    border-radius: 0 !important;
+    /* 始终胶囊形，不做 border-radius 过渡！ */
+    border-radius: 9999px !important;
+    /* 内部元件边距恒 = 下沉时圆弧半径 (2.25rem)，所有状态一致 */
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
+    /* 负margin把左右圆弧帽推出屏幕外 → 视觉上矩形贴边
+       内容起点: -2.25rem(margin) + 2.25rem(padding) = 0 恰好贴边 ✓ */
+    margin: 0 -2.25rem !important;
     box-shadow: none !important;
+    /* 只过渡 margin + 玻璃属性，没有 border-radius / padding 过渡！ */
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* ---------- 下沉（navbar-sticky-shadow）基准 ---------- */
+  /* ---------- 下沉（navbar-sticky-shadow）：圆弧帽收回，胶囊悬浮 ---------- */
   #navbar.navbar-sticky-shadow > div {
+    /* 正margin悬浮 → 圆弧帽完整可见 → 胶囊形整体浮动 */
     margin: 0.5rem 0.75rem !important;
-    padding: 0 0 !important;
-    border-radius: 9999px !important;
     box-shadow: var(--shadow-navbar) !important;
-    transition:
-      margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
+    /* border-radius / padding 保持不变，不需要重新定义 */
   }
 
   /* 暗色下沉阴影 */
