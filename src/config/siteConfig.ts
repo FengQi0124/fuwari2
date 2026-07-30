@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	// 线路切换配置
 	officialSites: [
 		{ url: "https://blog.fengqi01.top/", alias: "1. CloudFlare" },
-		{ url: "https://fuwari2.vercel.app/", alias: "2. Vercel" },
+		{ url: "https://blog2.fengqi01.top/", alias: "2. Vercel" },
 		{ url: "http://localhost:4321", alias: "0. Dev" },
 	],
 

@@ -29,73 +29,38 @@
 
 /* ============================================================
  * 移动端（≤767px）导航栏动画
- * 基础逻辑参照 cd5eb44e 满意版：
- *   吸边 = 矩形贴边；下沉 = 胶囊形悬浮
- *
- * 在此基础上增加两件事：
- * 1) 下沉时，#navbar > div 的 padding-left/right = 顶栏胶囊的圆角半径
- *    (h-18 = 72px → 圆角 9999px 实际≈36px ≈ 2.25rem)
- *    这样顶栏内部元件与外框边缘的距离"视觉上等于圆角半径"，
- *    且这个距离变化由 0.7s 非线性过渡。
- * 2) 上浮时：border-radius 从 9999px → 0（直角），
- *    margin/padding 同步归零，最后稳定在"矩形贴边"。
+ * 基础逻辑：吸边 = 矩形贴边；下沉 = 胶囊形悬浮
+ * 只用 margin + border-radius 两个属性做过渡，避免 padding 导致跳帧
  * ============================================================ */
 @media (max-width: 767px) {
-  /* ---------- 上浮（吸边 / 顶端）基准 ---------- */
+  /* ---------- 吸边（顶端）基准 ---------- */
   #navbar > div {
     margin: 0 !important;
-    padding-left: 1rem !important;       /* 与原来的 px-4 一致 */
-    padding-right: 1rem !important;
-    border-radius: 0 !important;         /* 直角矩形 */
+    padding: 0 0 !important;         /* 用 Navbar 自身的 px-4 即可 */
+    border-radius: 0 !important;
     box-shadow: none !important;
-    will-change: margin, padding, border-radius, box-shadow;
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
-  }
-
-  /* 内部元件 —— 不改变任何位置属性，只让父级 padding 驱动"边距=圆角半径"的视觉效果 */
-  #navbar .btn-plain {
-    transition:
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1),
-      background-color       0.15s ease,
-      color                  0.15s ease;
   }
 
   /* ---------- 下沉（navbar-sticky-shadow）基准 ---------- */
   #navbar.navbar-sticky-shadow > div {
-    /* 外框悬浮：上下 0.5rem 左右 0.75rem */
     margin: 0.5rem 0.75rem !important;
-    /* 元件边距 = 圆角半径（h-18 半高≈36px = 2.25rem），非线性动画过渡 */
-    padding-left: 2.25rem !important;
-    padding-right: 2.25rem !important;
+    padding: 0 0 !important;
     border-radius: 9999px !important;
     box-shadow: var(--shadow-navbar) !important;
-    will-change: margin, padding, border-radius, box-shadow;
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-left           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      padding-right          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       box-shadow             0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       backdrop-filter        0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
-  }
-
-  /* 下沉：按钮圆角和顶栏胶囊一致 */
-  #navbar.navbar-sticky-shadow .btn-plain {
-    border-radius: 9999px;
-    transition:
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1),
-      background-color       0.15s ease,
-      color                  0.15s ease;
   }
 
   /* 暗色下沉阴影 */
