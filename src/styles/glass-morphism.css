@@ -29,45 +29,64 @@
 
 /* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
 @media (max-width: 767px) {
-  /* 顶端：胶囊形，圆角完全伸出屏幕外（视觉上满宽无圆角）
-     同时 padding 抵消负 margin，让内容与屏幕边缘保持约圆角半径的距离 */
+  /* ============================================================
+   * 吸边（顶端）默认状态 —— 对应"上浮"动画方向：
+   *   先贴边（margin 立即开始），再线性延长（padding 延迟 0.4s 开始）
+   * ============================================================ */
   #navbar > div,
   body.wallpaper-transparent #navbar[data-transparent-mode] > div {
     margin: 0 -1.5rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
+    /* 上浮：margin 先动(0s delay)，padding/border-radius 等 0.4s 后再动 */
     transition:
-      margin 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      padding-left 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      padding-right 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      border-radius 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      background-color 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      box-shadow 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
-      backdrop-filter 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0);
+      margin                 1.2s linear 0s,
+      padding-left           1.2s linear 0.4s,
+      padding-right          1.2s linear 0.4s,
+      border-radius          1.2s linear 0.4s,
+      background-color       1.2s linear 0s,
+      box-shadow             1.2s linear 0s,
+      backdrop-filter        1.2s linear 0s;
   }
 
-  /* 吸边时导航栏内按钮的 hover/active 背景保持方形圆角（默认状态） */
+  /* 吸边时导航栏内按钮圆角保持方形，border-radius 同样延迟跟上 padding */
   #navbar .btn-plain {
     transition:
-      border-radius 0.85s cubic-bezier(0.32, 0.72, 0.24, 1.0),
+      border-radius 1.2s linear 0.4s,
       background-color 0.15s ease,
       color 0.15s ease;
   }
 
-  /* 下沉：往下移 + 左右收缩往中间缩小，胶囊形完全可见，padding 恢复默认 */
+  /* ============================================================
+   * 下沉（滚动后）状态 —— 对应"下沉"动画方向：
+   *   所有位置属性同步线性移动（无 delay）
+   * ============================================================ */
   #navbar.navbar-sticky-shadow > div,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     border-radius: 9999px !important;
+    /* 下沉：全部同步线性移动 */
+    transition:
+      margin                 1.2s linear 0s,
+      padding-left           1.2s linear 0s,
+      padding-right          1.2s linear 0s,
+      border-radius          1.2s linear 0s,
+      background-color       1.2s linear 0s,
+      box-shadow             1.2s linear 0s,
+      backdrop-filter        1.2s linear 0s;
   }
 
-  /* 下沉时导航栏内按钮的 hover/active 背景改为大圆弧，与顶栏胶囊一致 */
+  /* 下沉时按钮圆角同步线性变成大圆弧 */
   #navbar.navbar-sticky-shadow .btn-plain,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
     border-radius: 9999px !important;
+    transition:
+      border-radius 1.2s linear 0s,
+      background-color 0.15s ease,
+      color 0.15s ease;
   }
 }
 
