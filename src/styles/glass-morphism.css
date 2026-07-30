@@ -1,76 +1,249 @@
 /**
- * 毛玻璃 (Glassmorphism) 增强样式
- * 只增强 backdrop-filter 和阴影，不添加伪元素，避免干扰现有布局
+ * 毛玻璃 (Glassmorphism) 样式
+ * 基于朋友提供的参数配置
  */
 
 /* ============================================
- * 卡片毛玻璃增强
+ * 毛玻璃变量定义
  * ============================================ */
-.card-base {
-    backdrop-filter: blur(12px) saturate(1.5);
-    -webkit-backdrop-filter: blur(12px) saturate(1.5);
-    transition:
-        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.35s ease,
-        background-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
-        border-color 0.36s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-:root.dark .card-base,
-.dark .card-base {
-    backdrop-filter: blur(14px) saturate(1.4);
-    -webkit-backdrop-filter: blur(14px) saturate(1.4);
-}
-
-/* hover 微上浮 */
-.card-base:hover {
-    transform: translateY(-2px);
+:root {
+  --glass-border-light: rgba(255, 255, 255, 0.38);
+  --glass-border-dark: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --glass-shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --glass-blur: blur(18px) saturate(160%);
+  --glass-blur-strong: blur(22px) saturate(170%);
+  --glass-blur-soft: blur(14px) saturate(150%);
+  --glass-blur-subtle: blur(16px) saturate(160%);
 }
 
 /* ============================================
- * 浮动面板毛玻璃增强
- * ============================================ */
-.float-panel {
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
-}
-
-/* ============================================
- * 悬浮圆角导航栏
- * 让顶栏脱离贴顶，改为悬浮圆角样式
- * 仅在非透明模式下生效（transparentMode = none 或非首页 banner 透明阶段）
+ * 导航栏悬浮圆角（胶囊形）
  * ============================================ */
 #navbar > div {
-    border-radius: 0.75rem !important;
-    margin-top: 0.5rem;
-    backdrop-filter: blur(16px) saturate(1.6) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(1.6) !important;
+  border-radius: 9999px !important;
+  margin: 0.6rem 1rem;
+  backdrop-filter: var(--glass-blur-strong) !important;
+  -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
 
-/* Banner 透明模式（semi/semifull）下恢复原样，不悬浮 */
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"] > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"] > div {
-    border-radius: 0 0 0.75rem 0.75rem !important;
-    margin-top: 0;
+/* 移动端（≤767px） */
+@media (max-width: 767px) {
+  #navbar > div {
+    margin: 0.5rem 0.75rem !important;
+    border-radius: 9999px !important;
+  }
 }
 
-/* full 模式完全透明 */
-#wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
-body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"] > div {
-    border-radius: 0 !important;
-    margin-top: 0;
+/* Banner 透明模式（semi/semifull）首页透明阶段：恢复原来的贴底圆角 + 无margin */
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div {
+  border-radius: 0 0 0.75rem 0.75rem !important;
+  margin: 0 !important;
+}
+
+/* Banner full 模式完全透明 */
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+/* 全宽导航栏覆盖：取消胶囊形和margin */
+#navbar-wrapper #navbar[data-full-width="true"] > div {
+  border-radius: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+/* 滚动后阴影增强 */
+body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* ============================================
+ * 卡片玻璃化（仅在 wallpaper-transparent 模式下生效）
+ * ============================================ */
+body.wallpaper-transparent .card-base,
+body.wallpaper-transparent .card-base-transparent {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.52) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: var(--glass-shadow);
+}
+
+:root.dark body.wallpaper-transparent .card-base,
+:root.dark body.wallpaper-transparent .card-base-transparent,
+.dark body.wallpaper-transparent .card-base,
+.dark body.wallpaper-transparent .card-base-transparent {
+  background: rgba(50, 50, 60, 0.52) !important;
+  border: 1px solid var(--glass-border-dark) !important;
+  box-shadow: var(--glass-shadow-dark);
+}
+
+/* ============================================
+ * 按钮 / 下拉菜单 / 浮动面板玻璃化
+ * ============================================ */
+body.wallpaper-transparent .btn-card,
+body.wallpaper-transparent .bg-\(--card-bg\),
+body.wallpaper-transparent .post-list-layout-switch {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.42) !important;
+  border: 1px solid var(--glass-border-light) !important;
+}
+
+:root.dark body.wallpaper-transparent .btn-card,
+:root.dark body.wallpaper-transparent .bg-\(--card-bg\),
+:root.dark body.wallpaper-transparent .post-list-layout-switch,
+.dark body.wallpaper-transparent .btn-card,
+.dark body.wallpaper-transparent .bg-\(--card-bg\),
+.dark body.wallpaper-transparent .post-list-layout-switch {
+  background: rgba(50, 50, 60, 0.42) !important;
+  border: 1px solid var(--glass-border-dark) !important;
+}
+
+/* ============================================
+ * 下拉面板 / 浮动面板毛玻璃
+ * ============================================ */
+#wallpaper-wrapper ~ * .dropdown-content,
+#wallpaper-wrapper ~ * .float-panel,
+body:has(#wallpaper-wrapper) .dropdown-content,
+body:has(#wallpaper-wrapper) .float-panel,
+body.wallpaper-transparent .dropdown-content,
+body.wallpaper-transparent .float-panel {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border: 1px solid var(--glass-border-light) !important;
+}
+
+:root.dark .dropdown-content,
+:root.dark .float-panel,
+.dark .dropdown-content,
+.dark .float-panel {
+  background: rgba(50, 50, 60, 0.45) !important;
+  box-shadow: var(--glass-shadow-dark) !important;
+  border: 1px solid var(--glass-border-dark) !important;
+}
+
+/* ============================================
+ * 导航栏玻璃化（wallpaper 模式下的覆盖）
+ * ============================================ */
+body.wallpaper-transparent #navbar[data-transparent-mode] > div {
+  backdrop-filter: var(--glass-blur-strong) !important;
+  -webkit-backdrop-filter: var(--glass-blur-strong) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: var(--glass-shadow);
+}
+
+:root.dark body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+.dark body.wallpaper-transparent #navbar[data-transparent-mode] > div {
+  background: rgba(50, 50, 60, 0.42) !important;
+  border: 1px solid var(--glass-border-dark) !important;
+  box-shadow: var(--glass-shadow-dark);
+}
+
+/* ============================================
+ * 文章正文玻璃化
+ * ============================================ */
+body.wallpaper-transparent #post-content,
+body.wallpaper-transparent #post-container,
+body.wallpaper-transparent .post-page-content {
+  backdrop-filter: var(--glass-blur-soft);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  background: rgba(255, 255, 255, 0.48) !important;
+  border: 1px solid var(--glass-border-light);
+  border-radius: var(--radius-large);
+  box-shadow: var(--glass-shadow);
+}
+
+:root.dark body.wallpaper-transparent #post-content,
+:root.dark body.wallpaper-transparent #post-container,
+:root.dark body.wallpaper-transparent .post-page-content,
+.dark body.wallpaper-transparent #post-content,
+.dark body.wallpaper-transparent #post-container,
+.dark body.wallpaper-transparent .post-page-content {
+  background: rgba(50, 50, 60, 0.48) !important;
+  border: 1px solid var(--glass-border-dark);
+  box-shadow: var(--glass-shadow-dark);
+}
+
+/* ============================================
+ * 侧边栏玻璃化（略轻）
+ * ============================================ */
+body.wallpaper-transparent #left-sidebar .card-base,
+body.wallpaper-transparent #right-sidebar .card-base,
+body.wallpaper-transparent .widget-layout .card-base {
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+}
+
+/* ============================================
+ * 评论区玻璃化
+ * ============================================ */
+body.wallpaper-transparent #post-comments {
+  backdrop-filter: var(--glass-blur-subtle);
+  -webkit-backdrop-filter: var(--glass-blur-subtle);
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid var(--glass-border-light);
+}
+
+:root.dark body.wallpaper-transparent #post-comments,
+.dark body.wallpaper-transparent #post-comments {
+  background: rgba(50, 50, 60, 0.5) !important;
+  border: 1px solid var(--glass-border-dark);
+}
+
+/* ============================================
+ * 悬停高亮
+ * ============================================ */
+body.wallpaper-transparent .card-base:hover,
+body.wallpaper-transparent .btn-card:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+:root.dark body.wallpaper-transparent .card-base:hover,
+:root.dark body.wallpaper-transparent .btn-card:hover,
+.dark body.wallpaper-transparent .card-base:hover,
+.dark body.wallpaper-transparent .btn-card:hover {
+  background: rgba(65, 65, 75, 0.6) !important;
+}
+
+/* ============================================
+ * 过渡平滑
+ * ============================================ */
+body.wallpaper-transparent .card-base,
+body.wallpaper-transparent .btn-card,
+body.wallpaper-transparent .dropdown-content,
+body.wallpaper-transparent .float-panel,
+body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+body.wallpaper-transparent #post-content,
+body.wallpaper-transparent #post-comments {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
 }
 
 /* ============================================
  * 性能降级
  * ============================================ */
 @media (prefers-reduced-motion: reduce) {
-    .card-base {
-        transition: background-color 0.15s, border-color 0.15s;
-    }
-    .card-base:hover {
-        transform: none;
-    }
+  body.wallpaper-transparent .card-base,
+  body.wallpaper-transparent .btn-card,
+  body.wallpaper-transparent .dropdown-content,
+  body.wallpaper-transparent .float-panel,
+  body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+  body.wallpaper-transparent #post-content,
+  body.wallpaper-transparent #post-comments {
+    transition: none;
+  }
 }

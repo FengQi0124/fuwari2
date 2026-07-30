@@ -255,6 +255,14 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			showOnPostPage: true,
 		},
 		{
+			// 组件类型：音乐播放器
+			type: "music",
+			// 是否启用该组件
+			enable: true,
+			// 是否在文章详情页显示
+			showOnPostPage: true,
+		},
+		{
 			// 线路切换组件
 			type: "domainSwitcher",
 			enable: true,
