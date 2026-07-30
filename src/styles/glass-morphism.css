@@ -23,9 +23,9 @@
 #navbar > div {
   border-radius: 9999px !important;
   margin: 0.6rem 1rem;
-  /* 所有情况下元件边距恒 = 圆弧半径的一半 (R/2 = 1.125rem) */
-  padding-left: 1.125rem !important;
-  padding-right: 1.125rem !important;
+  /* 所有情况下元件边距恒 = 整个圆弧半径 (R = 2.25rem) */
+  padding-left: 2.25rem !important;
+  padding-right: 2.25rem !important;
   backdrop-filter: var(--glass-blur-strong) !important;
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
@@ -35,11 +35,11 @@
  *
  * 核心思路：顶栏始终是完整胶囊形（border-radius:9999px 恒定不变），
  * 通过负 margin 控制"左右圆弧帽"的伸出/收回。
- * 内部元件边距恒 = 圆弧半径的一半 (R/2 = 1.125rem)，
+ * 内部元件边距恒 = 整个圆弧半径 (R = 2.25rem)，
  * 所有状态下一致，不需要任何 padding 过渡动画。
  *
- *   吸边(顶端)：margin: 0 -1.125rem → 帽伸出屏外，视觉矩形贴边
- *               内容起点: -1.125rem + 1.125rem = 0 恰好贴边 ✓
+ *   吸边(顶端)：margin: 0 -2.25rem → 帽伸出屏外，视觉矩形贴边
+ *               内容起点: -2.25rem(margin) + 2.25rem(padding) = 0 恰好贴边 ✓
  *
  *   下沉(滚动)：margin: 0.5rem 0.75rem → 帽收回可见，胶囊悬浮
  *
@@ -50,11 +50,11 @@
   #navbar > div {
     /* 始终胶囊形，形状不变，无过渡 */
     border-radius: 9999px !important;
-    /* 内部元件边距恒 = 圆弧半径的一半 (1.125rem)，所有状态一致 */
-    padding-left: 1.125rem !important;
-    padding-right: 1.125rem !important;
+    /* 内部元件边距恒 = 整个圆弧半径 (2.25rem)，所有状态一致 */
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
     /* 负margin绝对值 = padding → 内容起点恰好 0 贴边 */
-    margin: 0 -1.125rem !important;
+    margin: 0 -2.25rem !important;
     box-shadow: none !important;
     /* 只过渡 margin + 玻璃属性，没有 border-radius / padding 过渡！ */
     transition:

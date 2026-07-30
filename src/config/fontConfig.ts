@@ -118,7 +118,15 @@ export const fontConfig: FontSelectionConfig = {
 	enable: true,
 	// 当前选择的字体 CSS 变量名（对应上方 fonts 中的 cssVariable）
 	// 使用 "system" 表示系统字体（不加载任何自定义字体）
-	selected: ["--font-oppo-sans", "--font-lxgw-wenkai"],
+	// 完整6字体栈，与 main.css 中 --font-sans 保持一致：
+	// OPPOSans → LXGW WenKai → Zen Maru Gothic → Inter → GreatVibes
+	selected: [
+		"--font-oppo-sans",
+		"--font-lxgw-wenkai",
+		"--font-zen-maru-gothic",
+		"--font-inter",
+		"--font-greatvibes",
+	],
 
 	// 各区域独立字体设置（填写上方 fonts 中的 cssVariable，留空则使用全局 selected 字体）
 	// 例如：bannerTitleFont: "--font-inter", 表示主页横幅主标题使用 Inter 字体
