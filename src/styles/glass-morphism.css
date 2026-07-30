@@ -27,13 +27,13 @@
   -webkit-backdrop-filter: var(--glass-blur-strong) !important;
 }
 
-/* 移动端（≤767px）- 顶端贴边，滚动后左右收缩往中间缩小成胶囊 */
+/* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
 @media (max-width: 767px) {
-  /* 顶端：贴边满宽无圆角 */
+  /* 顶端：胶囊形，圆角完全伸出屏幕外（视觉上满宽无圆角） */
   #navbar > div,
   body.wallpaper-transparent #navbar[data-transparent-mode] > div {
-    margin: 0 !important;
-    border-radius: 0 !important;
+    margin: 0 -1.5rem !important;
+    border-radius: 9999px !important;
     transition:
       margin 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
       border-radius 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -42,10 +42,10 @@
       backdrop-filter 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* 滚动后：左右收缩往中间缩小，变成胶囊 */
+  /* 下沉：往下移 + 左右收缩往中间缩小，胶囊形完全可见 */
   #navbar.navbar-sticky-shadow > div,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
-    margin: 0 0.75rem !important;
+    margin: 0.5rem 0.75rem !important;
     border-radius: 9999px !important;
   }
 }
@@ -64,6 +64,19 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scro
 body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
   border-radius: 0 !important;
   margin: 0 !important;
+}
+
+/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外 */
+@media (max-width: 767px) {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
+    margin: 0 -1.5rem !important;
+    border-radius: 9999px !important;
+  }
 }
 
 /* 全宽导航栏覆盖：取消胶囊形和margin */

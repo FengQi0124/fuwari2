@@ -52,6 +52,7 @@
 /* 确保平滑滚动 */
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 /* 页面顶部渐变高光效果 */

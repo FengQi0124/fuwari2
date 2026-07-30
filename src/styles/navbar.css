@@ -221,23 +221,9 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scro
 }
 
 /* ============================================
- * 移动端去掉底部圆角
+ * 移动端导航栏形状由 glass-morphism.css 控制
+ * （贴边时圆角伸出屏幕，滚动后收缩成胶囊）
  * ============================================ */
-@media (max-width: 767px) {
-    #navbar>div {
-        border-radius: 0 !important;
-    }
-
-    /* 覆盖 banner 模式 semi / semifull 下的圆角 */
-    #wallpaper-wrapper~* #navbar[data-transparent-mode="semi"][data-is-home="true"]>div,
-    body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"]>div,
-    #wallpaper-wrapper~* #navbar[data-transparent-mode="semifull"][data-is-home="true"]>div,
-    body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"]>div,
-    #wallpaper-wrapper~* #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled>div,
-    body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled>div {
-        border-radius: 0 !important;
-    }
-}
 
 
 /* ============================================
