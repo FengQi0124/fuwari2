@@ -30,59 +30,63 @@
 /* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
 @media (max-width: 767px) {
   /* ============================================================
-   * 吸边（顶端）默认状态 —— 对应"上浮"动画方向
-   * 0.8s 纯线性移动，位置匀速到达，无跳变无拖尾
+   * 上浮基准（吸边）：0.8s 线性
+   * 用高优先级选择器 + !important 确保上浮时过渡不被打断跳帧
    * ============================================================ */
-  #navbar > div,
-  body.wallpaper-transparent #navbar[data-transparent-mode] > div {
+  html body #navbar > div,
+  html body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+  html #wallpaper-wrapper ~ * #navbar[data-transparent-mode] > div,
+  html body:has(#wallpaper-wrapper) #navbar[data-transparent-mode] > div {
     margin: 0 -1.5rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
     transition:
-      margin                 0.8s linear,
-      padding-left           0.8s linear,
-      padding-right          0.8s linear,
-      border-radius          0.8s linear,
-      background-color       0.8s linear,
-      box-shadow             0.8s linear,
-      backdrop-filter        0.8s linear;
+      margin                 0.8s linear !important,
+      padding-left           0.8s linear !important,
+      padding-right          0.8s linear !important,
+      border-radius          0.8s linear !important,
+      background-color       0.8s linear !important,
+      box-shadow             0.8s linear !important,
+      backdrop-filter        0.8s linear !important;
   }
 
-  /* 吸边时导航栏内按钮圆角保持方形 */
-  #navbar .btn-plain {
+  /* 吸边时导航栏内按钮圆角保持方形，0.8s 线性 */
+  html body #navbar .btn-plain {
     transition:
-      border-radius 0.8s linear,
+      border-radius 0.8s linear !important,
       background-color 0.15s ease,
       color 0.15s ease;
   }
 
   /* ============================================================
-   * 下沉（滚动后）状态
-   * 0.7s 非线性快到位：开头快、结尾慢，与上浮对称
+   * 下沉基准（navbar-sticky-shadow）：0.7s 非线性
+   * 当此 class 存在时，完整覆盖上浮基准的 transition 与目标值
    * ============================================================ */
-  #navbar.navbar-sticky-shadow > div,
-  body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
+  html body #navbar.navbar-sticky-shadow > div,
+  html body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  html #wallpaper-wrapper ~ * #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  html body:has(#wallpaper-wrapper) #navbar[data-transparent-mode].navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     border-radius: 9999px !important;
     transition:
-      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
+      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important;
   }
 
-  /* 下沉时按钮圆角同步变圆弧 */
-  #navbar.navbar-sticky-shadow .btn-plain,
-  body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
+  /* 下沉时按钮圆角同步变圆弧，0.7s 非线性 */
+  html body #navbar.navbar-sticky-shadow .btn-plain,
+  html body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow .btn-plain {
     border-radius: 9999px !important;
     transition:
-      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) !important,
       background-color 0.15s ease,
       color 0.15s ease;
   }
