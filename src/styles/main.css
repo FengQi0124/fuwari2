@@ -18,14 +18,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Tailwind v4 配置 - 从 tailwind.config.cjs 迁移
- * --font-sans 只包含 fontConfig.selected 中真正的正文字体，
- * Zen Maru Gothic / Inter / GreatVibes 为区域字体（banner 标题/副标题/装饰），
- * 不进入默认正文字体栈，避免全局字符被装饰性字体替换。
+ * 正文字体栈完整包含用户的所有字体（与 fontConfig.selected 中所有正文字体一致）：
+ * OPPOSans → LXGW WenKai → Zen Maru Gothic（日文/备用）→ Inter → GreatVibes（装饰）→ 系统字体
  */
 @theme {
   --font-sans:
     var(--font-oppo-sans),
     var(--font-lxgw-wenkai),
+    var(--font-zen-maru-gothic),
+    var(--font-inter),
+    var(--font-greatvibes),
     ui-sans-serif,
     system-ui,
     -apple-system,

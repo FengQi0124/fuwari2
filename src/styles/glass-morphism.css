@@ -28,28 +28,26 @@
 }
 
 /* ============================================================
- * 移动端（≤767px）导航栏动画 —— 零跳帧丝滑版本
+ * 移动端（≤767px）导航栏动画 —— 满意版逻辑
+ * 参考 commit cd5eb44e（用户表示满意的那个版本）
  *
- * 内部元件位置跳帧的真正根因：
- *   margin / padding 属于 layout（回流）属性，浏览器内部根据盒模型
- *   计算子元素 x/y 位置，这个过程不会逐帧经过 GPU 合成层，因此肉眼
- *   看到"伸缩那一瞬间"是"计算出来一帧一帧变"，而不是像素丝滑位移。
+ * 核心原则（不跳帧 / 原件不出框）：
+ *   只改 #navbar > div 的外框属性（margin / border-radius / box-shadow）
+ *   绝不修改内部网格的 padding、transform、width
+ *   内部所有元件的位置由原来的样式决定，不会因为我们加了动画而偏移
  *
- * 修复方案（GPU 合成层）：
- *   1) 外框 #navbar > div：保留 margin / border-radius / box-shadow
- *      过渡（这些属性对内部坐标不直接影响，视觉不会卡）
- *   2) 内部网格容器 .mx-auto.grid...：不再依赖父级 padding 位移，
- *      直接用 transform: translate3d(x, y, 0)，强制提升到 GPU 合成层，
- *      保证 60fps 不回流丝滑。
- *   3) 按钮内部图标/文字（.btn-plain > *）也用 translate3d 跟容器
- *      一起走，保证"按下的按键边框（按钮背景）"和里面的原件同步丝滑。
+ * 吸边（顶端）：margin:0, border-radius:0    → 贴边矩形，与原来页面完全一致
+ * 下沉（滚动后）：margin:0.5rem 0.75rem, border-radius:9999px → 悬浮胶囊
+ *
+ * 7 条属性统一 0.7s 非线性，margin 属于 layout 但变化范围很小
+ * （上下只变 0.5rem，左右只变 0.75rem），浏览器 60fps 无压力。
  * ============================================================ */
 @media (max-width: 767px) {
-  /* ---------- 上浮基准（吸边）外框 ---------- */
+  /* ---------- 吸边（顶端）基准 ---------- */
   #navbar > div {
-    margin: 0 -1.5rem !important;
-    padding: 0 0 !important;     /* padding 不再驱动位移，完全交给 transform */
-    border-radius: 9999px !important;
+    margin: 0 !important;
+    padding: 0 0 !important;         /* 用 Navbar 自身的 px-4 即可 */
+    border-radius: 0 !important;
     box-shadow: none !important;
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
@@ -60,46 +58,17 @@
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* ---------- 核心：内部网格 —— 用 translate3d 驱动原件位移（GPU合成层） ----------
-   * 吸边时：
-   *   外框 margin: 0 -1.5rem  → 每边伸出屏幕 1.5rem
-   *   但原件要与屏幕边缘保持 ~1.5rem 的距离（类似圆角半径）
-   *   → 内部网格 translate3d(1.5rem, 0, 0) 向左屏伸出抵消，同时宽度 calc(100% - 3rem)
-   * 下沉时：
-   *   外框 margin: 0.5rem 0.75rem
-   *   原件与外框的间距由 0.75rem 体现，内部网格保持居中即可 → translate3d(0,0,0)
-   */
-  #navbar > div > *:first-child,
-  #navbar > div .grid {
-    transform: translate3d(1.5rem, 0, 0) !important;
-    width: calc(100% - 3rem) !important;
-    max-width: none !important;
-    margin: 0 auto !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    /* 强制 GPU 合成，丝滑 60fps */
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition:
-      transform              0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      width                  0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
-  }
-
-  /* 左列（logo+标题）/ 右列（搜索音乐按钮等）单独也做 translate3d 跟随 ——
-   * 双重保险，防止内部 btn-plain 的背景框跟内容出现微跳帧 */
+  /* 内部所有原件 —— 不改变任何位置属性，保证不出框不跳帧 */
   #navbar .btn-plain {
-    /* 按钮自身背景跟着整体容器一起位移，保证按键边框同步丝滑 */
-    will-change: transform, border-radius;
-    backface-visibility: hidden;
     transition:
-      transform              0.7s cubic-bezier(0.25, 0.75, 0.2, 1),
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1),
       background-color       0.15s ease,
       color                  0.15s ease;
   }
 
-  /* ---------- 下沉基准（navbar-sticky-shadow）外框 ---------- */
+  /* ---------- 下沉（navbar-sticky-shadow）基准
+   * 选择器比上浮多 1 个 class，正确覆盖、过渡起点终点能匹配
+   * ---------- */
   #navbar.navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     padding: 0 0 !important;
@@ -114,28 +83,16 @@
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* 下沉：内部网格回正居中（translate3d(0,0,0) + width 100%，由父级 margin 缩出圆角间距） */
-  #navbar.navbar-sticky-shadow > div > *:first-child,
-  #navbar.navbar-sticky-shadow > div .grid {
-    transform: translate3d(0, 0, 0) !important;
-    width: 100% !important;
-    max-width: var(--page-width) !important;
-    will-change: transform;
-    transition:
-      transform              0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
-      width                  0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
-  }
-
-  /* 下沉：按钮圆角变圆弧 */
+  /* 下沉时按钮圆角变圆弧，与顶栏胶囊一致 */
   #navbar.navbar-sticky-shadow .btn-plain {
-    border-radius: 9999px !important;
+    border-radius: 9999px;
     transition:
-      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
+      border-radius          0.7s cubic-bezier(0.25, 0.75, 0.2, 1),
       background-color       0.15s ease,
       color                  0.15s ease;
   }
 
-  /* ---------- 暗色下沉阴影 ---------- */
+  /* 暗色下沉阴影 */
   .dark #navbar.navbar-sticky-shadow > div,
   :root.dark #navbar.navbar-sticky-shadow > div {
     box-shadow: var(--shadow-navbar-dark) !important;
