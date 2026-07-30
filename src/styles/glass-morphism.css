@@ -31,7 +31,7 @@
 @media (max-width: 767px) {
   /* ============================================================
    * 吸边（顶端）默认状态 —— 对应"上浮"动画方向
-   * 0.7s 非线性快到位：开头快、结尾慢，自然回弹
+   * 0.7s 均匀缓动，让组件匀速回到贴边位置，不跳变
    * ============================================================ */
   #navbar > div,
   body.wallpaper-transparent #navbar[data-transparent-mode] > div {
@@ -40,19 +40,19 @@
     padding-right: 2.5rem !important;
     border-radius: 9999px !important;
     transition:
-      margin                 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      padding-left           0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      padding-right          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      border-radius          0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      background-color       0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      box-shadow             0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
-      backdrop-filter        0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+      margin                 0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      padding-left           0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      padding-right          0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      border-radius          0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      background-color       0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      box-shadow             0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+      backdrop-filter        0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   /* 吸边时导航栏内按钮圆角保持方形 */
   #navbar .btn-plain {
     transition:
-      border-radius 0.7s cubic-bezier(0.2, 0.9, 0.2, 1),
+      border-radius 0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
       background-color 0.15s ease,
       color 0.15s ease;
   }
