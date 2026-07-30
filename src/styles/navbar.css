@@ -25,7 +25,8 @@
     border-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1),
     backdrop-filter 0.36s cubic-bezier(0.22, 1, 0.36, 1),
-    border-radius 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ============================================
@@ -269,7 +270,7 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-enab
 
 
 
-/* 调整下拉菜单和浮动面板的背景透明度 */
+/* 下拉菜单和浮动面板使用毛玻璃效果 */
 /* 亮色主题 */
 #wallpaper-wrapper~* .dropdown-content,
 #wallpaper-wrapper~* .float-panel,
@@ -277,9 +278,11 @@ body:has(#wallpaper-wrapper) .dropdown-content,
 body:has(#wallpaper-wrapper) .float-panel,
 body.wallpaper-transparent .dropdown-content,
 body.wallpaper-transparent .float-panel {
-    background: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: var(--shadow-md) !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    -webkit-backdrop-filter: var(--glass-blur) !important;
+    background: rgba(255, 255, 255, 0.45) !important;
+    box-shadow: var(--glass-shadow) !important;
+    border: 1px solid var(--glass-border-light) !important;
 }
 
 /* 暗色主题 */
@@ -289,9 +292,11 @@ body.wallpaper-transparent .float-panel {
 :root.dark body:has(#wallpaper-wrapper) .float-panel,
 :root.dark body.wallpaper-transparent .dropdown-content,
 :root.dark body.wallpaper-transparent .float-panel {
-    background: rgba(23, 23, 23, 0.95) !important;
-    box-shadow: var(--shadow-md) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    -webkit-backdrop-filter: var(--glass-blur) !important;
+    background: rgba(50, 50, 60, 0.45) !important;
+    box-shadow: var(--glass-shadow-dark) !important;
+    border: 1px solid var(--glass-border-dark) !important;
 }
 
 /* ============================================
