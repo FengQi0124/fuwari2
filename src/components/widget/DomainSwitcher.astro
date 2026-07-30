@@ -1,0 +1,339 @@
+---
+import WidgetLayout from "@/components/common/WidgetLayout.astro";
+import { siteConfig } from "@/config";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+const officialSites = siteConfig.officialSites || [];
+
+// 构建官方域名列表（用于服务端渲染弹窗时传递给客户端）
+const officialHostnames: string[] = [];
+officialSites.forEach((site) => {
+    const urlStr = typeof site === 'string' ? site : site.url;
+    try {
+        const hostname = new URL(urlStr).hostname;
+        if (!officialHostnames.includes(hostname)) {
+            officialHostnames.push(hostname);
+        }
+    } catch (e) {
+        // skip invalid URLs
+    }
+});
+const firstOfficialSite = officialSites.length > 0
+    ? (typeof officialSites[0] === 'string' ? officialSites[0] : officialSites[0].url)
+    : '';
+---
+<WidgetLayout name="线路切换" id="domain-switcher" class={className} style={style}>
+    <div class="flex flex-col gap-2">
+        {officialSites.map((site) => {
+            const urlStr = typeof site === 'string' ? site : site.url;
+            const alias = typeof site === 'object' ? site.alias : null;
+            let hostname = urlStr;
+            try {
+                hostname = new URL(urlStr).hostname;
+            } catch (e) {
+                // fallback to original string if not a valid URL
+            }
+            const displayName = alias || hostname;
+            return (
+                <a 
+                    href={urlStr}
+                    data-url={urlStr}
+                    class="domain-link btn-regular !justify-between px-3 py-2 rounded-lg text-sm group"
+                    data-domain={hostname}
+                >
+                    <span class="truncate">{displayName}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="latency-text text-xs font-bold opacity-0 transition-opacity"></span>
+                        <span class="status-indicator w-2 h-2 rounded-full bg-[var(--btn-content)]/30 dark:bg-white/30"></span>
+                    </div>
+                </a>
+            );
+        })}
+    </div>
+</WidgetLayout>
+
+<!-- 非官方域名检测弹窗 -->
+<div id="unofficial-domain-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="unofficial-domain-backdrop"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white dark:bg-[#1a1a2e] shadow-2xl overflow-hidden transform transition-all">
+        <!-- 顶部警告条 -->
+        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-4">
+            <div class="flex items-center gap-3">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h3 class="text-lg font-bold text-white">非官方域名提醒</h3>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="p-6">
+            <div class="mb-4">
+                <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                    您当前正在通过非官方域名访问本站，为保障您的访问体验与数据安全，建议前往官方域名访问。
+                </p>
+            </div>
+
+            <div class="mb-4 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                <div class="flex items-center gap-2 text-xs text-yellow-700 dark:text-yellow-400 mb-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <span class="font-medium">当前域名</span>
+                </div>
+                <p id="current-domain-display" class="font-mono text-sm text-yellow-800 dark:text-yellow-300 break-all">-</p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <div class="flex items-center gap-2 text-xs text-green-700 dark:text-green-400 mb-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="font-medium">推荐官方域名</span>
+                </div>
+                <p id="official-domain-display" class="font-mono text-sm text-green-800 dark:text-green-300 break-all">-</p>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="px-6 pb-6">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button id="stay-button" class="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    继续访问
+                </button>
+                <button id="go-official-button" class="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-sm hover:from-green-600 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg">
+                    前往官方域名
+                </button>
+            </div>
+            <label class="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-gray-400 cursor-pointer select-none">
+                <input type="checkbox" id="dismiss-unofficial-check" class="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500" />
+                <span>7天内不再提示</span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<script is:inline define:vars={{ officialHostnames: JSON.stringify(officialHostnames), firstOfficialSite }}>
+    // 非官方域名检测逻辑（页面加载时立即执行，使用 is:inline 确保优先级）
+    (function() {
+        // 全局守卫：组件可能被渲染多次（左/右侧栏 + 移动端底部），确保逻辑只初始化一次
+        if (window.__unofficialDomainCheckInitialized) return;
+        window.__unofficialDomainCheckInitialized = true;
+
+        const DISMISS_KEY = 'unofficial-domain-dismissed-until';
+        const OFFICIAL_HOSTNAMES = JSON.parse(officialHostnames);
+        const FIRST_OFFICIAL = firstOfficialSite;
+
+        function checkAndShowModal() {
+            // 没有配置官方域名就跳过
+            if (!OFFICIAL_HOSTNAMES || OFFICIAL_HOSTNAMES.length === 0) return;
+
+            const currentDomain = window.location.hostname;
+            const isOfficial = OFFICIAL_HOSTNAMES.some(h => h === currentDomain);
+            if (isOfficial) return;
+
+            // 检查是否已被用户暂时关闭
+            try {
+                const until = localStorage.getItem(DISMISS_KEY);
+                if (until && Date.now() < parseInt(until, 10)) return;
+            } catch (e) { /* ignore */ }
+
+            // 显示弹窗
+            const modal = document.getElementById('unofficial-domain-modal');
+            const currentDisplay = document.getElementById('current-domain-display');
+            const officialDisplay = document.getElementById('official-domain-display');
+            const backdrop = document.getElementById('unofficial-domain-backdrop');
+            const stayBtn = document.getElementById('stay-button');
+            const goBtn = document.getElementById('go-official-button');
+            const dismissCheckbox = document.getElementById('dismiss-unofficial-check');
+
+            if (!modal) return;
+
+            if (currentDisplay) currentDisplay.textContent = currentDomain;
+            if (officialDisplay && OFFICIAL_HOSTNAMES.length > 0) {
+                officialDisplay.textContent = OFFICIAL_HOSTNAMES[0];
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            function handleStay() {
+                try {
+                    if (dismissCheckbox && dismissCheckbox.checked) {
+                        // 7天 = 7 * 24 * 60 * 60 * 1000
+                        localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 86400 * 1000));
+                    }
+                } catch (e) { /* ignore */ }
+                closeModal();
+            }
+
+            function handleGoOfficial() {
+                if (!FIRST_OFFICIAL) { closeModal(); return; }
+                try {
+                    const target = new URL(FIRST_OFFICIAL);
+                    target.pathname = window.location.pathname;
+                    target.search = window.location.search;
+                    target.hash = window.location.hash;
+                    window.location.href = target.toString();
+                } catch (e) {
+                    window.location.href = FIRST_OFFICIAL;
+                }
+            }
+
+            if (backdrop) backdrop.addEventListener('click', handleStay);
+            if (stayBtn) stayBtn.addEventListener('click', handleStay);
+            if (goBtn) goBtn.addEventListener('click', handleGoOfficial);
+        }
+
+        // 立即执行（DOM ready 后）
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkAndShowModal);
+        } else {
+            checkAndShowModal();
+        }
+        // 兼容 Swup 页面切换
+        document.addEventListener('astro:page-load', checkAndShowModal);
+    })();
+</script>
+
+<script>
+    function initDomainSwitcher() {
+        const currentDomain = window.location.hostname;
+        const links = document.querySelectorAll('.domain-link');
+        
+        links.forEach(link => {
+            const domain = link.getAttribute('data-domain');
+            const href = link.getAttribute('href');
+            
+            // Reset classes first
+            link.className = 'domain-link btn-regular !justify-between px-3 py-2 rounded-lg text-sm group';
+            
+            const indicator = link.querySelector('.status-indicator');
+            if (indicator) {
+                indicator.className = 'status-indicator w-2 h-2 rounded-full bg-[var(--btn-content)]/30 dark:bg-white/30';
+            }
+
+            // Highlight current domain
+            if (domain === currentDomain) {
+                // Remove btn-regular to avoid style conflicts and apply active styles
+                link.classList.remove('btn-regular');
+                link.classList.add(
+                    'flex', 'items-center', 'justify-between', // Restore layout styles from btn-regular/base
+                    'bg-[var(--primary)]', 
+                    'text-white', 
+                    'dark:text-black/70',
+                    'cursor-default'
+                );
+                
+                if (indicator) {
+                    indicator.classList.remove('bg-[var(--btn-content)]/30', 'dark:bg-white/30');
+                    indicator.classList.add('bg-white', 'dark:bg-black/70');
+                }
+                
+                link.removeAttribute('href'); 
+            } else if (href) {
+                // Update link to preserve current path
+                try {
+                    const url = new URL(href);
+                    url.pathname = window.location.pathname;
+                    url.search = window.location.search;
+                    url.hash = window.location.hash;
+                    link.setAttribute('href', url.toString());
+                } catch (e) {
+                    console.error('Invalid URL:', href);
+                }
+            }
+        });
+    }
+
+    async function testLatency() {
+        const links = document.querySelectorAll('.domain-link');
+        for (const link of links) {
+            const url = link.getAttribute('data-url');
+            const latencyText = link.querySelector('.latency-text');
+            const indicator = link.querySelector('.status-indicator');
+            
+            if (!url || !latencyText) continue;
+
+            // Loading state
+            latencyText.textContent = '...';
+            latencyText.classList.remove('opacity-0', 'text-green-500', 'text-yellow-500', 'text-red-500');
+            latencyText.classList.add('opacity-50');
+
+            const start = performance.now();
+            let latency = -1;
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                await fetch(url, { 
+                    method: 'HEAD',
+                    mode: 'no-cors', 
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                const end = performance.now();
+                latency = Math.round(end - start);
+            } catch (e) {
+                // Error or timeout
+            }
+
+            latencyText.classList.remove('opacity-50');
+            
+            const isActive = link.classList.contains('bg-[var(--primary)]');
+            
+            if (latency >= 0) {
+                latencyText.textContent = `${latency}ms`;
+                if (latency < 200) {
+                    if (!isActive) {
+                        latencyText.classList.add('text-green-600', 'dark:text-green-400');
+                        if (indicator) {
+                            indicator.classList.remove('bg-[var(--btn-content)]/30', 'dark:bg-white/30');
+                            indicator.classList.add('bg-green-500');
+                        }
+                    }
+                } else if (latency < 500) {
+                    if (!isActive) {
+                        latencyText.classList.add('text-yellow-600', 'dark:text-yellow-400');
+                        if (indicator) {
+                            indicator.classList.remove('bg-[var(--btn-content)]/30', 'dark:bg-white/30');
+                            indicator.classList.add('bg-yellow-500');
+                        }
+                    }
+                } else {
+                    latencyText.classList.add('text-red-600', 'dark:text-red-400');
+                    if (indicator && !isActive) {
+                        indicator.classList.remove('bg-[var(--btn-content)]/30', 'dark:bg-white/30');
+                        indicator.classList.add('bg-red-500');
+                    }
+                }
+            } else {
+                latencyText.textContent = '-';
+                latencyText.classList.add('text-red-600', 'dark:text-red-400');
+            }
+        }
+    }
+
+    initDomainSwitcher();
+    testLatency();
+    document.addEventListener('astro:page-load', () => {
+        initDomainSwitcher();
+        testLatency();
+    });
+</script>
+
+
