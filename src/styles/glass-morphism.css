@@ -29,23 +29,30 @@
 
 /* 移动端（≤767px）- 顶端圆角完全伸出屏幕，滚动后下沉+收缩成胶囊 */
 @media (max-width: 767px) {
-  /* 顶端：胶囊形，圆角完全伸出屏幕外（视觉上满宽无圆角） */
+  /* 顶端：胶囊形，圆角完全伸出屏幕外（视觉上满宽无圆角）
+     同时 padding 抵消负 margin，让内容与屏幕边缘保持约圆角半径的距离 */
   #navbar > div,
   body.wallpaper-transparent #navbar[data-transparent-mode] > div {
     margin: 0 -1.5rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
     border-radius: 9999px !important;
     transition:
       margin 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      padding-left 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+      padding-right 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
       border-radius 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
       background-color 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
       box-shadow 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
       backdrop-filter 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* 下沉：往下移 + 左右收缩往中间缩小，胶囊形完全可见 */
+  /* 下沉：往下移 + 左右收缩往中间缩小，胶囊形完全可见，padding 恢复默认 */
   #navbar.navbar-sticky-shadow > div,
   body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     border-radius: 9999px !important;
   }
 }
@@ -66,7 +73,7 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled
   margin: 0 !important;
 }
 
-/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外 */
+/* 移动端覆盖 Banner 模式规则：贴边时圆角同样伸出屏幕外，padding 匹配 */
 @media (max-width: 767px) {
   #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"]:not(.scrolled) > div,
   #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"]:not(.scrolled) > div,
@@ -75,6 +82,8 @@ body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled
   #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"]:not(.scrolled) > div,
   body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"]:not(.scrolled) > div {
     margin: 0 -1.5rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
     border-radius: 9999px !important;
   }
 }
@@ -136,7 +145,7 @@ body.wallpaper-transparent .post-list-layout-switch {
 }
 
 /* ============================================
- * 下拉面板 / 浮动面板毛玻璃（与顶栏一致）
+ * 下拉面板 / 浮动面板毛玻璃（与卡片一致，透明度更高易读性更好）
  * ============================================ */
 #wallpaper-wrapper ~ * .dropdown-content,
 #wallpaper-wrapper ~ * .float-panel,
@@ -144,9 +153,9 @@ body:has(#wallpaper-wrapper) .dropdown-content,
 body:has(#wallpaper-wrapper) .float-panel,
 body.wallpaper-transparent .dropdown-content,
 body.wallpaper-transparent .float-panel {
-  backdrop-filter: var(--glass-blur-strong);
-  -webkit-backdrop-filter: var(--glass-blur-strong);
-  background: rgba(255, 255, 255, 0.42) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.52) !important;
   box-shadow: var(--glass-shadow) !important;
   border: 1px solid var(--glass-border-light) !important;
 }
@@ -155,7 +164,7 @@ body.wallpaper-transparent .float-panel {
 :root.dark .float-panel,
 .dark .dropdown-content,
 .dark .float-panel {
-  background: rgba(50, 50, 60, 0.42) !important;
+  background: rgba(50, 50, 60, 0.52) !important;
   box-shadow: var(--glass-shadow-dark) !important;
   border: 1px solid var(--glass-border-dark) !important;
 }
