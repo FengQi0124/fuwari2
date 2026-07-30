@@ -58,71 +58,9 @@ const firstOfficialSite = officialSites.length > 0
     </div>
 </WidgetLayout>
 
-<!-- 非官方域名检测弹窗 -->
-<div id="unofficial-domain-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="unofficial-domain-backdrop"></div>
-    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white dark:bg-[#1a1a2e] shadow-2xl overflow-hidden transform transition-all">
-        <!-- 顶部警告条 -->
-        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-4">
-            <div class="flex items-center gap-3">
-                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <h3 class="text-lg font-bold text-white">非官方域名提醒</h3>
-            </div>
-        </div>
-
-        <!-- 内容区域 -->
-        <div class="p-6">
-            <div class="mb-4">
-                <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                    您当前正在通过非官方域名访问本站，为保障您的访问体验与数据安全，建议前往官方域名访问。
-                </p>
-            </div>
-
-            <div class="mb-4 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
-                <div class="flex items-center gap-2 text-xs text-yellow-700 dark:text-yellow-400 mb-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                    <span class="font-medium">当前域名</span>
-                </div>
-                <p id="current-domain-display" class="font-mono text-sm text-yellow-800 dark:text-yellow-300 break-all">-</p>
-            </div>
-
-            <div class="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                <div class="flex items-center gap-2 text-xs text-green-700 dark:text-green-400 mb-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span class="font-medium">推荐官方域名</span>
-                </div>
-                <p id="official-domain-display" class="font-mono text-sm text-green-800 dark:text-green-300 break-all">-</p>
-            </div>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="px-6 pb-6">
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button id="stay-button" class="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    继续访问
-                </button>
-                <button id="go-official-button" class="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-sm hover:from-green-600 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg">
-                    前往官方域名
-                </button>
-            </div>
-            <label class="flex items-center gap-2 mt-4 text-xs text-gray-500 dark:text-gray-400 cursor-pointer select-none">
-                <input type="checkbox" id="dismiss-unofficial-check" class="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500" />
-                <span>7天内不再提示</span>
-            </label>
-        </div>
-    </div>
-</div>
-
 <script is:inline define:vars={{ officialHostnames: JSON.stringify(officialHostnames), firstOfficialSite }}>
-    // 非官方域名检测逻辑（页面加载时立即执行，使用 is:inline 确保优先级）
+    // 非官方域名检测：使用浏览器原生 alert 提示
     (function() {
-        // 全局守卫：组件可能被渲染多次（左/右侧栏 + 移动端底部），确保逻辑只初始化一次
         if (window.__unofficialDomainCheckInitialized) return;
         window.__unofficialDomainCheckInitialized = true;
 
@@ -130,80 +68,54 @@ const firstOfficialSite = officialSites.length > 0
         const OFFICIAL_HOSTNAMES = JSON.parse(officialHostnames);
         const FIRST_OFFICIAL = firstOfficialSite;
 
-        function checkAndShowModal() {
-            // 没有配置官方域名就跳过
+        function checkDomain() {
             if (!OFFICIAL_HOSTNAMES || OFFICIAL_HOSTNAMES.length === 0) return;
 
             const currentDomain = window.location.hostname;
             const isOfficial = OFFICIAL_HOSTNAMES.some(h => h === currentDomain);
             if (isOfficial) return;
 
-            // 检查是否已被用户暂时关闭
+            // 7天内不再提示
             try {
                 const until = localStorage.getItem(DISMISS_KEY);
                 if (until && Date.now() < parseInt(until, 10)) return;
             } catch (e) { /* ignore */ }
 
-            // 显示弹窗
-            const modal = document.getElementById('unofficial-domain-modal');
-            const currentDisplay = document.getElementById('current-domain-display');
-            const officialDisplay = document.getElementById('official-domain-display');
-            const backdrop = document.getElementById('unofficial-domain-backdrop');
-            const stayBtn = document.getElementById('stay-button');
-            const goBtn = document.getElementById('go-official-button');
-            const dismissCheckbox = document.getElementById('dismiss-unofficial-check');
+            // 浏览器原生提示
+            const officialDomain = OFFICIAL_HOSTNAMES[0];
+            const message =
+                `⚠️ 非官方域名提醒\n\n` +
+                `您当前正在通过非官方域名访问本站：\n${currentDomain}\n\n` +
+                `为保障访问体验，建议前往官方域名：\n${officialDomain}\n\n` +
+                `点击"确定"前往官方域名，点击"取消"继续留在当前域名。`;
 
-            if (!modal) return;
-
-            if (currentDisplay) currentDisplay.textContent = currentDomain;
-            if (officialDisplay && OFFICIAL_HOSTNAMES.length > 0) {
-                officialDisplay.textContent = OFFICIAL_HOSTNAMES[0];
-            }
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            function handleStay() {
-                try {
-                    if (dismissCheckbox && dismissCheckbox.checked) {
-                        // 7天 = 7 * 24 * 60 * 60 * 1000
-                        localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 86400 * 1000));
+            if (confirm(message)) {
+                // 用户选择前往官方域名
+                if (FIRST_OFFICIAL) {
+                    try {
+                        const target = new URL(FIRST_OFFICIAL);
+                        target.pathname = window.location.pathname;
+                        target.search = window.location.search;
+                        target.hash = window.location.hash;
+                        window.location.href = target.toString();
+                    } catch (e) {
+                        window.location.href = FIRST_OFFICIAL;
                     }
-                } catch (e) { /* ignore */ }
-                closeModal();
-            }
-
-            function handleGoOfficial() {
-                if (!FIRST_OFFICIAL) { closeModal(); return; }
-                try {
-                    const target = new URL(FIRST_OFFICIAL);
-                    target.pathname = window.location.pathname;
-                    target.search = window.location.search;
-                    target.hash = window.location.hash;
-                    window.location.href = target.toString();
-                } catch (e) {
-                    window.location.href = FIRST_OFFICIAL;
                 }
+            } else {
+                // 用户选择留下，7天内不再提示
+                try {
+                    localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 86400 * 1000));
+                } catch (e) { /* ignore */ }
             }
-
-            if (backdrop) backdrop.addEventListener('click', handleStay);
-            if (stayBtn) stayBtn.addEventListener('click', handleStay);
-            if (goBtn) goBtn.addEventListener('click', handleGoOfficial);
         }
 
-        // 立即执行（DOM ready 后）
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkAndShowModal);
+            document.addEventListener('DOMContentLoaded', checkDomain);
         } else {
-            checkAndShowModal();
+            checkDomain();
         }
-        // 兼容 Swup 页面切换
-        document.addEventListener('astro:page-load', checkAndShowModal);
+        document.addEventListener('astro:page-load', checkDomain);
     })();
 </script>
 

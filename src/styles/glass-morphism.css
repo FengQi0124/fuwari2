@@ -1,124 +1,66 @@
 /**
  * 毛玻璃 (Glassmorphism) 增强样式
- *
- * 设计原则：克制、通透、Apple 风格
- * - 不使用 SVG 位移滤镜（避免过度扭曲）
- * - 在现有 card-base / float-panel 基础上叠加 backdrop-filter
- * - 顶部边缘高光 + 底部柔和阴影 = 玻璃厚度感
- * - 鼠标跟随光斑仅在 hover 时显示，非常微妙
+ * 只增强 backdrop-filter 和阴影，不添加伪元素，避免干扰现有布局
  */
-
-@reference "tailwindcss";
 
 /* ============================================
  * 卡片毛玻璃增强
- * 直接叠加在 .card-base 上
  * ============================================ */
 .card-base {
-    backdrop-filter: blur(14px) saturate(1.6);
-    -webkit-backdrop-filter: blur(14px) saturate(1.6);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        0 1px 2px rgba(0, 0, 0, 0.03),
-        0 4px 16px -4px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px) saturate(1.5);
+    -webkit-backdrop-filter: blur(12px) saturate(1.5);
     transition:
-        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.4s ease,
-        backdrop-filter 0.3s ease,
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease,
         background-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
         border-color 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root.dark .card-base,
 .dark .card-base {
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.06),
-        0 1px 2px rgba(0, 0, 0, 0.15),
-        0 4px 16px -4px rgba(0, 0, 0, 0.25);
-}
-
-/* 顶部高光弧 */
-.card-base::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0) 35%
-    );
-    mask-image: linear-gradient(180deg, black 0%, black 25%, transparent 50%);
-    -webkit-mask-image: linear-gradient(180deg, black 0%, black 25%, transparent 50%);
-}
-:root.dark .card-base::before,
-.dark .card-base::before {
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.04) 0%,
-        rgba(255, 255, 255, 0) 35%
-    );
-}
-
-/* 鼠标跟随光斑 */
-.card-base::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 0;
-    background: radial-gradient(
-        circle 180px at var(--glass-x, 50%) var(--glass-y, 50%),
-        rgba(255, 255, 255, 0.06) 0%,
-        rgba(255, 255, 255, 0) 70%
-    );
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-.card-base:hover::after {
-    opacity: 1;
-}
-
-/* 内容层高于光斑 */
-.card-base > * {
-    position: relative;
-    z-index: 1;
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
 }
 
 /* hover 微上浮 */
 .card-base:hover {
     transform: translateY(-2px);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 2px 4px rgba(0, 0, 0, 0.05),
-        0 8px 24px -6px rgba(0, 0, 0, 0.1);
-}
-:root.dark .card-base:hover,
-.dark .card-base:hover {
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 2px 4px rgba(0, 0, 0, 0.2),
-        0 8px 24px -6px rgba(0, 0, 0, 0.35);
 }
 
 /* ============================================
  * 浮动面板毛玻璃增强
  * ============================================ */
 .float-panel {
-    backdrop-filter: blur(20px) saturate(1.7);
-    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
 }
 
 /* ============================================
- * 导航栏毛玻璃增强
- * 增加饱和度，保持与现有 navbar.css 逻辑兼容
+ * 悬浮圆角导航栏
+ * 让顶栏脱离贴顶，改为悬浮圆角样式
+ * 仅在非透明模式下生效（transparentMode = none 或非首页 banner 透明阶段）
  * ============================================ */
 #navbar > div {
-    backdrop-filter: blur(var(--navbar-glass-blur, 20px)) saturate(1.6) !important;
-    -webkit-backdrop-filter: blur(var(--navbar-glass-blur, 20px)) saturate(1.6) !important;
+    border-radius: 0.75rem !important;
+    margin-top: 0.5rem;
+    backdrop-filter: blur(16px) saturate(1.6) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.6) !important;
+}
+
+/* Banner 透明模式（semi/semifull）下恢复原样，不悬浮 */
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"] > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"] > div {
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    margin-top: 0;
+}
+
+/* full 模式完全透明 */
+#wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"] > div {
+    border-radius: 0 !important;
+    margin-top: 0;
 }
 
 /* ============================================

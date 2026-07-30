@@ -1723,25 +1723,4 @@ function disableAnimation() {
   document.addEventListener('swup:contentReplaced', () => {
     requestAnimationFrame(initImageLoadFadeIn);
   });
-
-  // 毛玻璃鼠标跟随光斑
-  function initGlassMouseTracking() {
-    const cards = document.querySelectorAll<HTMLElement>('.card-base');
-    cards.forEach(card => {
-      if (card.dataset.glassInit) return;
-      card.dataset.glassInit = "1";
-      card.addEventListener('pointermove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        card.style.setProperty('--glass-x', `${x}%`);
-        card.style.setProperty('--glass-y', `${y}%`);
-      }, { passive: true });
-    });
-  }
-  initGlassMouseTracking();
-  document.addEventListener('astro:page-load', initGlassMouseTracking);
-  document.addEventListener('swup:contentReplaced', () => {
-    requestAnimationFrame(initGlassMouseTracking);
-  });
 </script>
