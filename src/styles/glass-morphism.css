@@ -181,7 +181,10 @@ body.wallpaper-transparent .post-list-layout-switch {
 
 /* ============================================
  * 下拉面板 / 浮动面板毛玻璃（与卡片一致，透明度更高易读性更好）
+ * 不加前置选择器，保证下拉面板始终有玻璃背景不丢失
  * ============================================ */
+.dropdown-content,
+.float-panel,
 #wallpaper-wrapper ~ * .dropdown-content,
 #wallpaper-wrapper ~ * .float-panel,
 body:has(#wallpaper-wrapper) .dropdown-content,
@@ -199,6 +202,8 @@ body.wallpaper-transparent .float-panel {
 :root.dark .float-panel,
 .dark .dropdown-content,
 .dark .float-panel {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   background: rgba(50, 50, 60, 0.52) !important;
   box-shadow: var(--glass-shadow-dark) !important;
   border: 1px solid var(--glass-border-dark) !important;
