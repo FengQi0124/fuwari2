@@ -60,11 +60,10 @@ const adapter = process.env.CF_WORKERS
 		})
 	: undefined;
 
-// https://astro.build/config
 export default defineConfig({
 	site: siteConfig.site_url,
 
-	base: "/",
+	base: process.env.GITHUB_ACTIONS ? "/fuwari2/" : "/",
 	trailingSlash: "always",
 
 	adapter,
