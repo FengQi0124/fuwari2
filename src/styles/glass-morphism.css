@@ -356,3 +356,22 @@ body.wallpaper-transparent #post-comments {
     max-width: calc(100vw - 0.125rem) !important;
   }
 }
+
+/* ============================================
+ * 移动端吸顶状态：面板位置修正
+ * 吸顶时 navbar 容器有 margin: 0 -2.25rem（向外延伸 36px），
+ * 导致 absolute/fixed 面板的 right 定位溢出屏幕右侧。
+ * 用 margin 补偿：除主题切换面板外，其余向左移 18px，
+ * 搜索面板向右移 18px。
+ * 仅在 :not(.navbar-sticky-shadow) 即吸顶状态生效，下沉后自动恢复。
+ * ============================================ */
+@media (max-width: 767px) {
+  #navbar:not(.navbar-sticky-shadow) #music-nav-panel,
+  #navbar:not(.navbar-sticky-shadow) #nav-menu-panel,
+  #navbar:not(.navbar-sticky-shadow) #display-setting {
+    margin-right: 18px;
+  }
+  #navbar:not(.navbar-sticky-shadow) #search-panel {
+    margin-left: 18px;
+  }
+}
