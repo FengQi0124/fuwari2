@@ -8,7 +8,7 @@ import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-s
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import swup from "@swup/astro";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, fontProviders } from "astro/config";
+import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { pluginLanguageLogo } from "ec-lang-logo"; /* Language Logo */
@@ -28,8 +28,6 @@ import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 import {
 	expressiveCodeConfig,
-	fontConfig,
-	fontsList,
 	mermaidConfig,
 	plantumlConfig,
 	siteConfig,
@@ -51,7 +49,6 @@ import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 import { remarkPlantuml } from "./src/plugins/remark-plantuml.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 import { remarkWikiLink } from "./src/plugins/remark-wiki-link.js";
-import { collectUsedFontCssVars } from "./src/utils/fontHelper";
 
 if (process.env.NODE_ENV === "development") {
 	setMaxListeners(20);
@@ -69,42 +66,6 @@ export default defineConfig({
 
 	base: "/",
 	trailingSlash: "always",
-
-	// 字体配置 - 只加载实际使用的字体，跳过未引用的以加快构建
-	fonts: (() => {
-		// 禁用字体功能时直接返回空数组，跳过 Astro Font API 集成
-		if (!fontConfig.enable) return [];
-
-		const used = collectUsedFontCssVars(fontConfig);
-		return fontsList
-			.filter((f) => used.has(f.cssVariable))
-			.map((f) => {
-				let provider;
-				switch (f.provider) {
-					case "google":
-						provider = fontProviders.google();
-						break;
-					case "fontsource":
-						provider = fontProviders.fontsource();
-						break;
-					case "local":
-						provider = fontProviders.local();
-						break;
-					case "bunny":
-						provider = fontProviders.bunny();
-						break;
-					case "fontshare":
-						provider = fontProviders.fontshare();
-						break;
-					case "npm":
-						provider = fontProviders.npm();
-						break;
-					default:
-						provider = f.provider;
-				}
-				return { ...f, provider };
-			});
-	})(),
 
 	adapter,
 

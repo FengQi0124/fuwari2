@@ -2,89 +2,55 @@
 /**
  * FontSetup.astro
  *
- * 使用 Astro Font API（<Font /> 组件）统一管理字体加载。
- * 字体定义在 fontConfig.ts 的 fonts 数组中配置，
- * 本组件负责渲染 <Font /> 标签并设置 body 字体和区域覆盖 CSS 变量。
- *
- * 字体的 fallback 由各字体定义中的 fallbacks 字段控制（Astro Font API 处理），
+ * 根据 fontConfig 配置加载字体并设置 body 字体栈。
+ * 新版使用 CDN 链接或本地字体文件，通过 <link> 标签和 @font-face 加载。
  */
-import { Font } from "astro:assets";
 import { fontConfig } from "@/config";
-import { collectUsedFontCssVars } from "@/utils/fontHelper";
 
-// 使用共享的工具函数收集所有需要加载的 CSS 变量名（selected + 各区域字体，去重）
-// enable=false 时返回空集，不会加载任何字体
-const allCssVars = fontConfig.enable
-	? collectUsedFontCssVars(fontConfig)
-	: new Set<string>();
+const SYSTEM_FONT_STACK = fontConfig.fallback.join(", ");
 
-// 统一解析 selected 为数组（用于后续 body font-family 和 preload 判断）
-const selectedIds: string[] =
-	fontConfig.enable && fontConfig.selected
-		? Array.isArray(fontConfig.selected)
-			? fontConfig.selected
-			: [fontConfig.selected]
-		: [];
+// 根据 selected 收集需要加载的字体
+const selectedIds = fontConfig.enable && fontConfig.selected
+	? Array.isArray(fontConfig.selected)
+		? fontConfig.selected
+		: [fontConfig.selected]
+	: [];
+
+// 获取选中字体的配置
+const selectedFonts = selectedIds
+	.filter(id => id !== "system")
+	.map(id => (fontConfig.fonts as Record<string, any>)[id])
+	.filter(Boolean);
 
 // 生成 body 的 font-family 值
-// 每个字体的 fallback 由其在 fonts 中的 fallbacks 字段控制
-// 这里只拼接 CSS 变量引用，末尾加系统字体作为最终保底
-const SYSTEM_FONT_STACK =
-	"system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
-const selectedFontVars = selectedIds.filter((v) => v !== "system");
-const bodyFontFamily =
-	selectedFontVars.length > 0
-		? [...selectedFontVars.map((v) => `var(${v})`), SYSTEM_FONT_STACK].join(
-				", ",
-			)
-		: SYSTEM_FONT_STACK;
-
-// 各区域字体 CSS 变量值
-const bannerTitleFontVar = fontConfig.enable
-	? fontConfig.bannerTitleFont || ""
-	: "";
-const bannerSubtitleFontVar = fontConfig.enable
-	? fontConfig.bannerSubtitleFont || ""
-	: "";
-const navbarTitleFontVar = fontConfig.enable
-	? fontConfig.navbarTitleFont || ""
-	: "";
+const bodyFontFamily = selectedFonts.length > 0
+	? [...selectedFonts.map(f => f.family), ...fontConfig.fallback].join(", ")
+	: SYSTEM_FONT_STACK;
 ---
 
-<!-- Astro Font API: 自动下载、缓存并生成优化的 @font-face -->
-{Array.from(allCssVars).map((cssVar) => (
-  <Font
-    cssVariable={cssVar as any}
-    preload={selectedFontVars.includes(cssVar)}
-  />
+<!-- 加载选中字体的 CSS/字体文件 -->
+{fontConfig.enable && selectedFonts.map((font) => (
+	font.src.startsWith("/") ? (
+		// 本地字体文件 - 使用 @font-face
+		<style set:html={`
+			@font-face {
+				font-family: '${font.family}';
+				src: url('${font.src}') format('${font.format || 'woff2'}');
+				font-weight: ${font.weight || 400};
+				font-display: ${font.display || 'swap'};
+			}
+		`} />
+	) : (
+		// CDN 字体 - 使用 <link> 加载 CSS
+		<link rel="stylesheet" href={font.src} />
+	)
 ))}
 
-<!-- 区域字体 CSS 变量 + body 字体 -->
-{fontConfig.enable && (bannerTitleFontVar || bannerSubtitleFontVar || navbarTitleFontVar || selectedFontVars.length > 0) && (
-  <style
-    set:html={`
-    ${bannerTitleFontVar || bannerSubtitleFontVar || navbarTitleFontVar ? `:root {
-      ${bannerTitleFontVar ? `--font-banner-title: var(${bannerTitleFontVar}, inherit);` : ""}
-      ${bannerSubtitleFontVar ? `--font-banner-subtitle: var(${bannerSubtitleFontVar}, inherit);` : ""}
-      ${navbarTitleFontVar ? `--font-navbar-title: var(${navbarTitleFontVar}, inherit);` : ""}
-    }` : ""}
-
-    body {
-      font-family: ${bodyFontFamily};
-    }
-  `}
-  />
+<!-- 设置 body 字体栈 -->
+{fontConfig.enable && (
+	<style set:html={`
+		body {
+			font-family: ${bodyFontFamily};
+		}
+	`} />
 )}
-
-<script>
-  // 字体加载完成事件
-  if (document.fonts && typeof document.fonts.ready !== "undefined") {
-    document.fonts.ready
-      .then(() => {
-        document.dispatchEvent(new CustomEvent("fontsLoaded"));
-      })
-      .catch((error) => {
-        console.warn("Font loading failed:", error);
-      });
-  }
-</script>
