@@ -51,6 +51,28 @@
     monospace;
 }
 
+/* ─── 字体分配规则 ───────────────────────────────────────
+ * 正文 → OPPO Sans（body 继承，不单独写）
+ * 标题 h1~h6、文章标题 → LXGW WenKai
+ * 导航栏、按钮、菜单、UI、Card 标题 → MiSans
+ * 这些选择器比 body 更具体，会覆盖 body 的字体栈
+ * ──────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6,
+.post-title, .article-title, .post-card-title {
+    font-family: "LXGW WenKai", serif;
+}
+
+#navbar, .navbar, nav,
+button, input, select, textarea,
+.menu, .dropdown-content, .dropdown-item,
+.card-title, .card-title-text,
+.sidebar, .widget, .float-panel,
+.btn-card, .btn-plain, .btn-regular,
+.header, .footer,
+.navbar-title, .nav-menu, .mobile-menu {
+    font-family: "MiSans", sans-serif;
+}
+
 /* 自定义工具类 - Tailwind v4 使用 @utility 定义 */
 @utility expand-animation {
   position: relative;
