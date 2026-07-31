@@ -18,36 +18,48 @@
 }
 
 /* ============================================================
- * 移动端（≤767px）导航栏悬浮圆角 + 动画
+ * 移动端（≤767px）Navbar 统一尺寸标准
  *
- * PC端（≥768px）保持原始样式：贴顶矩形，不做任何圆弧/悬浮处理。
+ * 适用所有壁纸模式（banner / overlay / transparent / none）共用一套布局：
+ *   - height: 4.5rem (固定，与 Navbar.astro 的 h-18 一致)
+ *   - padding-inline: 1rem (固定，与 Navbar.astro 的 px-4 一致)
+ *   - border-radius: 9999px (始终胶囊形)
  *
- * 核心思路：顶栏始终是完整胶囊形（border-radius:9999px 恒定不变），
- * 通过负 margin 控制"左右圆弧帽"的伸出/收回。
- * 内部元件边距恒 = 整个圆弧半径 (R = 2.25rem)，
- * 所有状态下一致，不需要任何 padding 过渡动画。
+ * 状态切换仅修改：
+ *   margin / background / backdrop-filter / box-shadow
  *
- *   吸边(顶端)：margin: 0 -2.25rem → 帽伸出屏外，视觉矩形贴边
- *               内容起点: -2.25rem(margin) + 2.25rem(padding) = 0 恰好贴边 ✓
+ * 不通过负 margin 改变内部布局，padding/height/border-radius 恒定，
+ * 内部按钮位置在任何状态下都完全一致，无跳帧。
  *
- *   下沉(滚动)：margin: 0.5rem 0.75rem → 帽收回可见，胶囊悬浮
+ *   吸边(默认)                  → margin: 0                贴边无间隙
+ *   下沉(.navbar-sticky-shadow)  → margin: 0.5rem 0.75rem   悬浮 + 阴影
  *
- * 只过渡 margin（单一属性），完全无跳帧。
+ * 选择器刻意覆盖 navbar.css 中所有 transparent-mode 分支，
+ * 让 banner / overlay / transparent / none 在移动端使用同一形状。
  * ============================================================ */
 @media (max-width: 767px) {
-  /* ---------- 吸边（顶端）：帽伸出屏外 ---------- */
-  #navbar > div {
-    /* 始终胶囊形，形状不变，无过渡 */
+  /* ---------- 共享布局：所有模式、所有状态都用这套尺寸 ---------- */
+  /* 选择器刻意覆盖 navbar.css 中所有 transparent-mode + [data-is-home] 分支 */
+  #navbar > div,
+  #navbar[data-transparent-mode] > div,
+  #navbar[data-transparent-mode].scrolled > div,
+  #navbar[data-transparent-mode][data-is-home] > div,
+  #navbar[data-transparent-mode][data-is-home].scrolled > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode][data-is-home] > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode][data-is-home].scrolled > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode][data-is-home] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode][data-is-home].scrolled > div,
+  body.wallpaper-transparent #navbar[data-transparent-mode][data-is-home] > div,
+  body.wallpaper-transparent #navbar[data-transparent-mode][data-is-home].scrolled > div {
+    /* 布局属性固定，所有状态一致 */
+    height: 4.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     border-radius: 9999px !important;
-    /* 内部元件边距恒 = 整个圆弧半径 (2.25rem)，所有状态一致 */
-    padding-left: 2.25rem !important;
-    padding-right: 2.25rem !important;
-    /* 负margin绝对值 = padding → 内容起点恰好 0 贴边 */
-    margin: 0 -2.25rem !important;
-    box-shadow: none !important;
-    backdrop-filter: var(--glass-blur-strong) !important;
-    -webkit-backdrop-filter: var(--glass-blur-strong) !important;
-    /* 只过渡 margin + 玻璃属性，没有 border-radius / padding 过渡！ */
+    box-sizing: border-box !important;
+    /* 默认吸边状态：贴边无间隙 */
+    margin: 0 !important;
+    /* 只过渡外部属性，不过渡布局属性，避免跳帧 */
     transition:
       margin                 0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
       background-color       0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important,
@@ -56,17 +68,22 @@
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* ---------- 下沉（navbar-sticky-shadow）：帽收回，胶囊悬浮 ---------- */
-  #navbar.navbar-sticky-shadow > div {
-    /* 正margin悬浮，帽子完整可见 */
+  /* ---------- 悬浮状态：仅改变 margin 和阴影 ---------- */
+  /* background / backdrop-filter 由各模式（navbar.css）自行决定，不在此强制 */
+  #navbar.navbar-sticky-shadow > div,
+  #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode].navbar-sticky-shadow > div,
+  body.wallpaper-transparent #navbar[data-transparent-mode].navbar-sticky-shadow > div {
     margin: 0.5rem 0.75rem !important;
     box-shadow: var(--shadow-navbar) !important;
-    /* border-radius / padding 保持一致，不需要重新定义 */
   }
 
   /* 暗色下沉阴影 */
+  :root.dark #navbar.navbar-sticky-shadow > div,
   .dark #navbar.navbar-sticky-shadow > div,
-  :root.dark #navbar.navbar-sticky-shadow > div {
+  :root.dark body.wallpaper-transparent #navbar.navbar-sticky-shadow > div,
+  .dark body.wallpaper-transparent #navbar.navbar-sticky-shadow > div {
     box-shadow: var(--shadow-navbar-dark) !important;
   }
 }
