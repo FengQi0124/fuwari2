@@ -7,7 +7,8 @@
  * 无需网络请求，无闪烁，体积小
  */
 
-import Iconify, { addCollection } from "@iconify/svelte/offline";
+import OfflineIcon from "@iconify/svelte/dist/OfflineIcon.svelte";
+import { addCollection } from "@iconify/svelte/dist/offline-functions";
 
 import iconsData from "@/constants/icons-data.json";
 
@@ -40,7 +41,7 @@ const iconExists = $derived(() => {
 </script>
 
 {#if iconExists()}
-	<Iconify
+	<OfflineIcon
 		{icon}
 		class="inline-icon inline-flex items-center justify-center {className}"
 		style={style}
