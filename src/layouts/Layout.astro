@@ -1041,18 +1041,14 @@ function disableAnimation() {
         }
       }
 
-      // 重新初始化semifull模式的滚动检测
+      // 重新初始化移动端滚动检测（所有模式共用）
       const navbar = document.getElementById("navbar");
       if (navbar) {
-        const transparentMode = navbar.getAttribute("data-transparent-mode");
-
-        if (transparentMode === "semifull") {
-          // 重新调用初始化函数来重新绑定滚动事件
-          if (
-            typeof (window as any).initSemifullScrollDetection === "function"
-          ) {
-            (window as any).initSemifullScrollDetection();
-          }
+        // 重新调用初始化函数来重新绑定滚动事件
+        if (
+          typeof (window as any).initSemifullScrollDetection === "function"
+        ) {
+          (window as any).initSemifullScrollDetection();
         }
       }
 
@@ -1108,15 +1104,11 @@ function disableAnimation() {
       if (navbar) {
         navbar.setAttribute("data-is-home", isHomePage.toString());
 
-        // 重新初始化semifull模式的滚动检测
-        const transparentMode = navbar.getAttribute("data-transparent-mode");
-        if (transparentMode === "semifull") {
-          // 重新调用初始化函数来重新绑定滚动事件
-          if (
-            typeof (window as any).initSemifullScrollDetection === "function"
-          ) {
-            (window as any).initSemifullScrollDetection();
-          }
+        // 重新初始化移动端滚动检测（所有模式共用）
+        if (
+          typeof (window as any).initSemifullScrollDetection === "function"
+        ) {
+          (window as any).initSemifullScrollDetection();
         }
       }
 

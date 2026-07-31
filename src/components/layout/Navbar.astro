@@ -333,22 +333,23 @@ function loadButtonScript() {
 
 loadButtonScript();
 
-// 为semifull模式添加滚动检测逻辑
+// 移动端滚动检测：所有模式共用，根据滚动位置切换 scrolled 状态
 function initSemifullScrollDetection() {
     const navbar = document.getElementById('navbar');
     if (!navbar) return;
 
-    const transparentMode = navbar.getAttribute('data-transparent-mode');
-    if (transparentMode !== 'semifull') return;
-
-    // 无论首页/非首页，semifull 都由滚动位置决定是否进入 scrolled 状态
-    // 先移除之前的滚动监听器，避免重复绑定
+    // 先清理之前的滚动监听器，避免重复绑定
     if (window.semifullScrollHandler) {
         window.removeEventListener('scroll', window.semifullScrollHandler as () => void);
         window.semifullScrollHandler = undefined;
     }
 
-    // 初始状态不强制加 scrolled，保持透明；滚动后再切换
+    // 仅移动端（≤767px）启用，PC 端不参与，避免影响桌面端样式
+    if (window.innerWidth > 767) return;
+
+    // 所有移动端模式统一监听滚动，不再限制为 semifull
+
+    // 初始状态不强制加 scrolled，保持吸边；滚动后再切换
     navbar.classList.remove('scrolled');
 
     let ticking = false;

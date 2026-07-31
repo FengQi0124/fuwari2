@@ -21,22 +21,24 @@
  * 移动端（≤767px）Navbar 统一尺寸标准
  *
  * 所有壁纸模式（banner / overlay / transparent / none）共用一套布局：
- *   - height: 3.5rem (56px, 固定)
- *   - padding-inline: 1.75rem (28px = 圆角半径，吸边时内容恰好贴边)
+ *   - height: 4.5rem (72px = 原 h-18，固定不变)
+ *   - padding-inline: 2.25rem (36px = 圆角半径 = height/2)
  *   - border-radius: 9999px (始终胶囊形)
  *
  * 状态切换（互斥选择器，避免 specificity 冲突）：
- *   吸边(默认 :not(.navbar-sticky-shadow)) → margin: 0 -1.75rem  圆弧推出屏外
- *   下沉(.navbar-sticky-shadow)            → margin: 0.5rem 0.75rem  完整胶囊悬浮
+ *   吸边(:not(.navbar-sticky-shadow)) → margin: 0 -2.25rem  圆弧推出屏外
+ *   下沉(.navbar-sticky-shadow)        → margin: 0.5rem 0.75rem  完整胶囊悬浮
  *
- * 关键：margin 分离到两个互斥选择器，不放在共享布局规则里，
- *       否则共享布局的高 specificity 会覆盖悬浮状态的 margin。
- *       background / backdrop-filter 由各模式（navbar.css）自行决定。
+ * 数学关系：height=72px → 圆角半径=36px=2.25rem
+ *   padding = 2.25rem (圆角半径)
+ *   吸边 margin = -2.25rem (负 padding) → -2.25+2.25=0 内容恰好贴边，圆弧完整推出
+ *
+ * 选择器覆盖 navbar.css 中所有 transparent-mode + [data-is-home] 分支，
+ * 让 banner / overlay / transparent / none 在移动端共用同一形状和动画。
  * ============================================================ */
 @media (max-width: 767px) {
   /* ---------- 1. 共享布局参数：所有模式、所有状态都用这套尺寸 ----------
-   * 只设置 height / padding / border-radius，不设置 margin！
-   * 选择器覆盖 navbar.css 中所有 transparent-mode + [data-is-home] 分支 */
+   * 只设置 height / padding / border-radius，不设置 margin！ */
   #navbar > div,
   #navbar[data-transparent-mode] > div,
   #navbar[data-transparent-mode].scrolled > div,
@@ -48,9 +50,9 @@
   body:has(#wallpaper-wrapper) #navbar[data-transparent-mode][data-is-home].scrolled > div,
   body.wallpaper-transparent #navbar[data-transparent-mode][data-is-home] > div,
   body.wallpaper-transparent #navbar[data-transparent-mode][data-is-home].scrolled > div {
-    height: 3.5rem !important;
-    padding-left: 1.75rem !important;
-    padding-right: 1.75rem !important;
+    height: 4.5rem !important;
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
     border-radius: 9999px !important;
     box-sizing: border-box !important;
     transition:
@@ -61,19 +63,19 @@
       border-color           0.7s cubic-bezier(0.25, 0.75, 0.2, 1) !important;
   }
 
-  /* ---------- 2. 吸边状态（默认）：负 margin 推圆弧出屏幕 ----------
+  /* ---------- 2. 吸边状态：负 margin 推圆弧出屏幕 ----------
    * 用 :not(.navbar-sticky-shadow) 与悬浮状态互斥，避免 margin 冲突。
-   * 负 margin 绝对值 = 圆角半径 (1.75rem) → 内容起点恰好 0 贴边，圆弧完整推出。 */
+   * 负 margin 绝对值 = 圆角半径 (2.25rem) → 内容起点恰好 0 贴边，圆弧完整推出。 */
   #navbar:not(.navbar-sticky-shadow) > div,
   #navbar[data-transparent-mode]:not(.navbar-sticky-shadow) > div,
   #navbar[data-transparent-mode][data-is-home]:not(.navbar-sticky-shadow) > div,
   #wallpaper-wrapper ~ * #navbar[data-transparent-mode][data-is-home]:not(.navbar-sticky-shadow) > div,
   body:has(#wallpaper-wrapper) #navbar[data-transparent-mode][data-is-home]:not(.navbar-sticky-shadow) > div,
   body.wallpaper-transparent #navbar[data-transparent-mode][data-is-home]:not(.navbar-sticky-shadow) > div {
-    margin: 0 -1.75rem !important;
+    margin: 0 -2.25rem !important;
   }
 
-  /* ---------- 3. 悬浮状态（.navbar-sticky-shadow）：正 margin 完整胶囊悬浮 ---------- */
+  /* ---------- 3. 悬浮状态：正 margin 完整胶囊悬浮 ---------- */
   #navbar.navbar-sticky-shadow > div,
   #navbar[data-transparent-mode].navbar-sticky-shadow > div,
   #navbar[data-transparent-mode][data-is-home].navbar-sticky-shadow > div,
