@@ -53,6 +53,7 @@ export const siteConfig: SiteConfig = {
 	officialSites: [
 		{ url: "https://blog.fengqi01.top/", alias: "1. CloudFlare" },
 		{ url: "https://blog2.fengqi01.top/", alias: "2. Vercel" },
+		{ url: "https://fengqi0124.github.io/fuwari2/", alias: "3. GitHub Actions" },
 		{ url: "http://localhost:4321", alias: "0. Dev" },
 	],
 
