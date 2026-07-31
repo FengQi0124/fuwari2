@@ -58,7 +58,7 @@ const firstOfficialSite = officialSites.length > 0
     </div>
 </WidgetLayout>
 
-
+<script is:inline define:vars={{ officialHostnames: JSON.stringify(officialHostnames), firstOfficialSite }}>
     // 非官方域名检测：使用浏览器原生 alert 提示
     (function() {
         if (window.__unofficialDomainCheckInitialized) return;
