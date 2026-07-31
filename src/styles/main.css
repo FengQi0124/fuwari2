@@ -55,6 +55,7 @@
  * 正文 → OPPO Sans（body 继承，不单独写）
  * 标题 h1~h6、文章标题 → LXGW WenKai
  * 导航栏、按钮、菜单、UI、Card 标题 → MiSans
+ * 文章加粗文字 → MiSans（weight 600）
  * 这些选择器比 body 更具体，会覆盖 body 的字体栈
  * ──────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6,
@@ -71,6 +72,13 @@ button, input, select, textarea,
 .header, .footer,
 .navbar-title, .nav-menu, .mobile-menu {
     font-family: "MiSans", sans-serif;
+    font-weight: 500;
+}
+
+/* 文章正文中加粗的文字用 MiSans Semibold */
+.custom-md strong, .markdown strong, article strong, .post-content strong {
+    font-family: "MiSans", sans-serif;
+    font-weight: 600;
 }
 
 /* 自定义工具类 - Tailwind v4 使用 @utility 定义 */
