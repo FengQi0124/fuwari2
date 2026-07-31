@@ -75,19 +75,19 @@ const firstOfficialSite = officialSites.length > 0
             const isOfficial = OFFICIAL_HOSTNAMES.some(h => h === currentDomain);
             if (isOfficial) return;
 
-            // 7天内不再提示
+            // 1天内不再提示
             try {
                 const until = localStorage.getItem(DISMISS_KEY);
                 if (until && Date.now() < parseInt(until, 10)) return;
             } catch (e) { /* ignore */ }
 
-            // 浏览器原生提示
-            const officialDomain = OFFICIAL_HOSTNAMES[0];
+            // 浏览器原生提示，列出所有官方域名
+            const officialDomainsList = OFFICIAL_HOSTNAMES.join('\n');
             const message =
                 `⚠️ 非官方域名提醒\n\n` +
                 `您当前正在通过非官方域名访问本站：\n${currentDomain}\n\n` +
-                `为保障访问体验，建议前往官方域名：\n${officialDomain}\n\n` +
-                `点击"确定"前往官方域名，点击"取消"继续留在当前域名。`;
+                `为保障访问体验，建议前往官方域名之一：\n${officialDomainsList}\n\n` +
+                `点击"确定"前往首选官方域名，点击"取消"继续留在当前域名。`;
 
             if (confirm(message)) {
                 // 用户选择前往官方域名
@@ -103,9 +103,9 @@ const firstOfficialSite = officialSites.length > 0
                     }
                 }
             } else {
-                // 用户选择留下，7天内不再提示
+                // 用户选择留下，1天内不再提示
                 try {
-                    localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 86400 * 1000));
+                    localStorage.setItem(DISMISS_KEY, String(Date.now() + 1 * 86400 * 1000));
                 } catch (e) { /* ignore */ }
             }
         }
