@@ -70,7 +70,9 @@ button, input, select, textarea,
 .sidebar, .widget, .float-panel,
 .btn-card, .btn-plain, .btn-regular,
 .header, .footer,
-.navbar-title, .nav-menu, .mobile-menu {
+.navbar-title, .nav-menu, .mobile-menu,
+.music-player-widget, .music-title, .music-artist,
+.item-title, .item-artist, .lrc-line {
     font-family: "MiSans", sans-serif;
     font-weight: 500;
 }
