@@ -124,7 +124,7 @@ onMount(() => {
             <Icon icon="material-symbols:dark-mode-outline-rounded" class="text-[1.25rem]"></Icon>
         </div>
     </button>
-    <div id="theme-mode-panel" class="absolute transition float-panel-closed top-11 -right-2 pt-5 z-50" role="menu" aria-labelledby="scheme-switch">
+    <div id="theme-mode-panel" class="absolute transition float-panel-closed top-11 right-0 pt-5 z-50" role="menu" aria-labelledby="scheme-switch">
         <DropdownPanel>
             <DropdownItem
                 role="menuitem"

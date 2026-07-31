@@ -330,3 +330,29 @@ body.wallpaper-transparent #post-comments {
     transition: none;
   }
 }
+
+/* ============================================
+ * 浮动面板右侧安全距离（最低 2px，防止溢出屏幕）
+ * 不修改原有 right-* 定位，距离 10px/50px 的原样保留；
+ * 仅通过 max-width 兜底保证面板宽度不超过视口 - 2px。
+ * ============================================ */
+.float-panel,
+.dropdown-content {
+  /* 最大宽度不超过视口 - 2px，面板本体不会贴到屏幕右边缘 */
+  max-width: calc(100vw - 0.125rem) !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+  .float-panel,
+  .dropdown-content {
+    max-width: calc(100vw - 0.125rem) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .float-panel,
+  .dropdown-content {
+    max-width: calc(100vw - 0.125rem) !important;
+  }
+}
