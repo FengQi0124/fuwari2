@@ -141,50 +141,9 @@ const stats = [
   </div>
 
   <div class="mt-4 flex justify-center">
-    <!-- 假ICP备 访问量统计小组件 (展开折线图版) -->
-    <style>
-      .ef-widget-clean {
-        background: #ffffff; color: #111111; border: 3px solid #111111; box-shadow: none;
-        padding: 10px 14px 8px 10px; width: 100%; max-width: 350px; box-sizing: border-box;
-        position: relative; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; overflow: visible;
-      }
-      .ef-cmyk-bar { position: absolute; right: 0; top: 0; bottom: 0; width: 5px; display: flex; flex-direction: column; overflow: hidden; }
-      .ef-cmyk-m { height: 12px; background: #ec008c; }
-      .ef-cmyk-c { height: 12px; background: #00aeef; }
-      .ef-cmyk-y { flex: 1; background: #fff100; }
-      .ef-cmyk-k { height: 5px; background: #111111; }
-      .ef-widget-clean .ef-head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #111111; padding-bottom: 4px; margin-bottom: 6px; }
-      .ef-widget-clean .ef-title { font-size: 14px; font-weight: 900; color: #111111; letter-spacing: 0.5px; }
-      .ef-widget-clean .ef-sub { font-size: 10px; color: #666666; font-family: monospace; }
-      .ef-widget-clean .ef-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-      .ef-widget-clean .ef-stat-card { background: #f4f5f7; border: 1.5px solid #111111; padding: 5px 6px; transition: background 0.15s ease; }
-      .ef-widget-clean .ef-stat-card:hover { background: #fff100; }
-      .ef-widget-clean .ef-stat-label { font-size: 10px; font-weight: 900; color: #555555; margin-bottom: 1px; }
-      .ef-widget-clean .ef-stat-val { font-size: 20px; font-weight: 900; color: #111111; font-family: "Oswald", "DIN", monospace; line-height: 1.1; }
-      .ef-widget-clean .ef-chart-container { background: #111111; border: 1.5px solid #111111; padding: 5px; position: relative; overflow: hidden; margin-bottom: 6px; }
-    </style>
-
-    <div class="flm-pv-widget ef-widget-clean">
-      <div class="ef-cmyk-bar"><div class="ef-cmyk-m"></div><div class="ef-cmyk-c"></div><div class="ef-cmyk-y"></div><div class="ef-cmyk-k"></div></div>
-      <div class="ef-head">
-        <div class="ef-title">访问量统计</div>
-        <div class="ef-sub">blog.fengqi01.top</div>
-      </div>
-      <div class="ef-stats-grid">
-        <div class="ef-stat-card"><div class="ef-stat-label">今日访问</div><div class="ef-stat-val" id="flm-pv-today">0</div></div>
-        <div class="ef-stat-card"><div class="ef-stat-label">累计访问</div><div class="ef-stat-val" id="flm-pv-total">0</div></div>
-      </div>
-      <div class="ef-chart-container">
-        <div style="font-size: 8px; color: #888888; margin-bottom: 2px; font-family: monospace;">// 30天访问趋势折线图</div>
-        <div id="flm-pv-chart"></div>
-      </div>
-      <div style="display:flex; justify-content:space-between; font-size:9px; color:#777777; font-family:monospace; border-top:1px dashed #cccccc; padding-top:3px;">
-        <span>FAKEICP ANALYTICS</span>
-        <span>30-DAY METRICS</span>
-      </div>
-    </div>
+    <!-- 假ICP备 访问量统计小组件 (iframe 嵌入代码) -->
+    <iframe src="https://fakeicp.top/api/analytics/widget?site=blog.fengqi01.top" style="width: 100%; max-width: 350px; height: 225px; border: none; overflow: hidden;" frameborder="0" scrolling="no"></iframe>
   </div>
-  <script src="https://fakeicp.top/widget.js" data-site="blog.fengqi01.top" async></script>
 </WidgetLayout>
 
 <script is:inline define:vars={{ siteStartDate, lastPostDate, todayText }}>
